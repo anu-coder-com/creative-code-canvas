@@ -3,46 +3,30 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowDown, ArrowUpRight, ArrowRight, X, Compass, Coffee, Code2, Layers, Database, Cloud, Braces, Circle, Play, RotateCcw, Check, Download, Sparkles, Server, Command } from 'lucide-react';
+import { ArrowRight, X, Compass, Check, Download, Play, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import OptionWheel from '@/components/react-bits/OptionWheel';
 import TargetCursor from '@/components/react-bits/TargetCursor';
+import TextCursor from '@/components/react-bits/TextCursor';
 import Magnet from '@/components/react-bits/Magnet';
 import SpecularButton from '@/components/react-bits/SpecularButton';
 import BorderGlow from '@/components/react-bits/BorderGlow';
 import SlingButton from '@/components/react-bits/SlingButton';
 import FlowingMenu from '@/components/react-bits/FlowingMenu';
+import MagicBento from '@/components/react-bits/MagicBento';
+import Cubes from '@/components/react-bits/Cubes';
+import FolderFloat from '@/components/react-bits/FolderFloat';
 import { PortfolioExperiments } from '@/components/portfolio-experiments';
-import { PortfolioIdentity } from '@/components/portfolio-identity';
 import { Timeline } from '@/components/ui/timeline';
 import chalkSystems from '@/assets/chalk-systems.jpg';
+import { navItems, navIds, heroWords, heroNotes, metroStations, capabilities, caseStages, projects, hoodNodes, projectTypes } from '@/components/portfolio-content';
 
 gsap.registerPlugin(ScrollTrigger);
-const sections = ['HOME', 'STORY', 'CRAFT', 'WORK', 'SYSTEMS', 'EXPERIMENTS', 'CONTACT'];
-const ids = ['home', 'story', 'craft', 'work', 'systems', 'experiments', 'contact'];
-const stations = ['IDEA', 'DESIGN', 'FRONTEND', 'BACKEND', 'API', 'DATABASE', 'DEPLOY'];
-const projectSteps = ['Problem', 'Design', 'Frontend', 'Backend', 'Integrations', 'Result'];
-const projects = [
-  { name: 'Orbit', type: 'PRODUCTIVITY / FULL-STACK', className: 'orbit', tagline: 'Less busywork.\nMore headspace.', intro: 'An operating system for the beautifully messy way creative teams work. From a scattered idea to the next thing shipped.', icon: Layers, brand: 'orbit', screenTitle: 'A little more clarity.', screenSubtitle: 'Your ideas, projects, and people. In one orbit.', metrics: ['12', '08', '94%'], metricLabels: ['IN MOTION', 'SHIPPED', 'ON TRACK'], steps: [
-    'Creative work is scattered across notes, task lists, and conversations. Orbit is a concept exploring how a team can keep context without creating another administrative chore.',
-    'A quiet visual language, progressive disclosure, and a single daily overview bring clarity. The interface is designed around decisions, not dashboards.',
-    'The concept interface uses React, reusable primitives, keyboard-friendly controls, and optimistic interaction patterns. The live preview here illustrates the product direction.',
-    'Proposed architecture: authenticated workspaces, role-scoped project access, transactional updates, and background job queues. This is an architecture concept, not a connected service.',
-    'Planned integrations: calendar sync, Slack notifications, and webhook-driven updates. Idempotency, retries, and explicit failure states are part of the design.',
-    'A concept for a calmer team workflow. No production metrics are claimed; the screen data is illustrative. The next validation step would be testing with real creative teams.'
-  ]},
-  { name: 'Local Table', type: 'COMMERCE / PRODUCT DESIGN', className: 'local', tagline: 'Good food.\nCloser to home.', intro: 'A neighborhood-first food discovery concept. Because the best recommendations still come from someone who knows the gali.', icon: Circle, brand: 'local table', screenTitle: 'What’s cooking nearby?', screenSubtitle: 'Small kitchens. Big personality. Made in Delhi.', metrics: ['24', '06', '18'], metricLabels: ['KITCHENS', 'NEIGHBORHOODS', 'DAILY SPECIALS'], steps: [
-    'Small neighborhood kitchens are hard to discover beyond word of mouth. Local Table is a concept for making discovery feel personal, not like an endless delivery catalogue.',
-    'Warm editorial menus, locality-first browsing, and clear dietary information give every kitchen its own personality. The design starts with food and the people behind it.',
-    'A React storefront concept with accessible filtering, cart state, responsive menu layouts, and clear empty states. The presentation is illustrative, not an ordering service.',
-    'Proposed system: kitchen inventory, order lifecycle state machines, server-validated pricing, and transaction-safe checkout. Orders would never rely on client-side totals.',
-    'Planned connections include payments, delivery status callbacks, and kitchen notifications. Signed callbacks and event deduplication would protect the order lifecycle.',
-    'A neighborhood commerce concept, ready for a real discovery and validation phase. Kitchen counts and screen statistics are demo data rather than production results.'
-  ]}
-];
 
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(true);
+  const [reduced, setReduced] = useState(false);
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReduced(media.matches);
@@ -52,9 +36,7 @@ function useReducedMotion() {
   return reduced;
 }
 
-function Kicker({number, children}: {number: string; children: string}) {
-  return <div className="section-kicker"><span className="text-primary">{number}</span><span>{children}</span></div>;
-}
+const Flow = ({ steps, live = false }: { steps: string[]; live?: boolean }) => <div className={`flow ${live ? 'is-live' : ''}`}>{steps.map((s, i) => <span className="contents" key={s}><span className="flow-node">{s}</span>{i < steps.length - 1 && <span className="flow-wire" style={{ animationDelay: `${i * .35}s` }} aria-hidden="true"/>}</span>)}</div>;
 
 export function Portfolio() {
   const root = useRef<HTMLDivElement>(null);
@@ -62,131 +44,244 @@ export function Portfolio() {
   const reduced = useReducedMotion();
   const [wheelOpen, setWheelOpen] = useState(false);
   const [selected, setSelected] = useState(0);
-  const [activeSection, setActiveSection] = useState(0);
+  const [active, setActive] = useState(0);
   const [project, setProject] = useState<number | null>(null);
-  const [step, setStep] = useState(0);
-  const [requestState, setRequestState] = useState<'idle' | 'running' | 'done'>('idle');
-  const [requestStation, setRequestStation] = useState(-1);
-  const [messageReady, setMessageReady] = useState(false);
-  const requestTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const modalContent = useRef<HTMLDivElement>(null);
+  const [stage, setStage] = useState(0);
+  const [hood, setHood] = useState(-1);
+  const [chai, setChai] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [kind, setKind] = useState('PRODUCT');
+  const [ready, setReady] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const navigate = (index: number) => {
-    const id = ids[index];
-    if (!id) return;
-    const target = document.getElementById(id);
-    if (!target) return;
-    setSelected(index); setWheelOpen(false);
-    if (lenisRef.current) lenisRef.current.scrollTo(target, { offset: 0, duration: 1.3 });
-    else target.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' });
+  const navigate = (i: number) => {
+    const el = document.getElementById(navIds[i] ?? '');
+    if (!el) return;
+    setSelected(i); setWheelOpen(false);
+    if (lenisRef.current) lenisRef.current.scrollTo(el, { duration: 1.4 }); else el.scrollIntoView();
   };
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      ids.forEach((id, i) => {
-        ScrollTrigger.create({ trigger: `#${id}`, start: 'top 45%', end: 'bottom 45%', onEnter: () => setActiveSection(i), onEnterBack: () => setActiveSection(i) });
-      });
-    }, root);
+    const ctx = gsap.context(() => navIds.forEach((id, i) => ScrollTrigger.create({ trigger: `#${id}`, start: 'top 50%', end: 'bottom 50%', onToggle: s => s.isActive && setActive(i) })), root);
     return () => ctx.revert();
   }, []);
 
   useEffect(() => {
     if (reduced) return;
-    const lenis = new Lenis({ duration: 1.05, smoothWheel: true, anchors: false });
+    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
     lenisRef.current = lenis;
     lenis.on('scroll', ScrollTrigger.update);
-    const tick = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(tick);
+    const tick = (t: number) => lenis.raf(t * 1000);
+    gsap.ticker.add(tick); gsap.ticker.lagSmoothing(0);
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      gsap.from('.identity-top', { opacity: 0, y: 8, duration: .7, clearProps: 'all' });
-      gsap.from('.identity-name-line', { y: 35, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', clearProps: 'all' });
-      gsap.from('.identity-intro', { y: 12, opacity: 0, duration: .8, delay: .35, clearProps: 'all' });
-      mm.add('(min-width: 768px)', () => {
-        gsap.to('.identity-name', { y: -18, ease: 'none', scrollTrigger: { trigger: '.identity-shell', start: 'top top', end: 'bottom top', scrub: .7 } });
-        gsap.to('.identity-verbs', { y: -60, ease: 'steps(4)', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .5 } });
-        gsap.to('.craft-notebook', { scrollTrigger: { trigger: '.craft-notebook', start: 'top 30%', endTrigger: '.craft', end: 'bottom 65%', pin: true, pinSpacing: false } });
+      // Hero: starts almost empty, then a short film driven by scroll.
+      const intro = gsap.timeline();
+      intro.from('.film-loc', { opacity: 0, y: 6, duration: .8, delay: .3 })
+        .from('.film-note', { opacity: 0, scale: .6, rotate: -8, stagger: .25, duration: .5, ease: 'back.out(2)' })
+        .from('.film-make .char-line', { yPercent: 110, duration: 1, ease: 'expo.out' }, '-=.2')
+        .from('.film-hint', { opacity: 0, duration: .6 });
+      const film = gsap.timeline({ scrollTrigger: { trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: .8 } });
+      film.to('.film-make', { scale: .6, opacity: 0, filter: 'blur(6px)', duration: 1 })
+        .to('.film-note', { opacity: 0, x: (i: number) => (i % 2 ? 80 : -80), duration: 1 }, '<')
+        .to('.film-hint', { opacity: 0, duration: .3 }, '<');
+      gsap.utils.toArray<HTMLElement>('.film-word').forEach(w => {
+        film.fromTo(w, { clipPath: 'inset(0 100% 0 0)', opacity: 1 }, { clipPath: 'inset(0 0% 0 0)', duration: 1, ease: 'power2.inOut' })
+          .to(w, { yPercent: -40, opacity: 0, skewX: -8, duration: .8 }, '+=.4');
       });
-      gsap.utils.toArray<HTMLElement>('.section-heading, .craft-notebook, .stage-story, .system-console').forEach(el => {
-        gsap.from(el, { y: 28, opacity: 0, duration: .75, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 90%', once: true }, clearProps: 'all' });
+      film.fromTo('.film-final', { opacity: 0, scale: 1.25, letterSpacing: '.3em' }, { opacity: 1, scale: 1, letterSpacing: '0em', duration: 1.2 })
+        .to('.film-sketch path', { strokeDashoffset: 0, duration: 1 }, '<');
+      // Metro map draws itself.
+      gsap.utils.toArray<SVGPathElement>('.metro-map .line').forEach(p => {
+        const len = p.getTotalLength(); gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(p, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.metro-map', start: 'top 75%', end: 'bottom 40%', scrub: .6 } });
       });
-      gsap.utils.toArray<HTMLElement>('.product-window').forEach(el => gsap.fromTo(el, {y: 25}, {y: -15, ease: 'none', scrollTrigger: {trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1}}));
-      gsap.to('.metro', { '--metro-progress': '100%', ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .4 } });
+      gsap.from('.metro-map .stop', { scale: 0, transformOrigin: 'center', stagger: .1, scrollTrigger: { trigger: '.metro-map', start: 'top 70%', end: 'bottom 45%', scrub: .6 } });
+      // Split headings.
+      gsap.utils.toArray<HTMLElement>('.reveal').forEach(el => gsap.from(el.querySelectorAll('.char-line'), { yPercent: 110, stagger: .08, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } }));
+      gsap.utils.toArray<HTMLElement>('.momo-line').forEach((el, i) => gsap.from(el, { x: i % 2 ? 60 : -60, opacity: 0, scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 60%', scrub: .5 } }));
+      mm.add('(min-width: 900px)', () => {
+        gsap.to('.hood-title-a', { xPercent: -18, ease: 'none', scrollTrigger: { trigger: '.hood', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+        gsap.to('.hood-title-b', { xPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hood', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+        gsap.fromTo('.delhi-strip', { xPercent: 0 }, { xPercent: -45, ease: 'none', scrollTrigger: { trigger: '.delhi', start: 'top top', end: '+=1400', scrub: .6, pin: true } });
+      });
+      gsap.from('.hood', { clipPath: 'inset(8% 6% 8% 6%)', scrollTrigger: { trigger: '.hood', start: 'top bottom', end: 'top 30%', scrub: .6 } });
+      gsap.from('.finale-line', { yPercent: 100, opacity: 0, stagger: .15, scrollTrigger: { trigger: '.finale', start: 'top 75%', end: 'center 60%', scrub: .6 } });
+      gsap.to('.rail-fill', { scaleY: 1, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .3 } });
     }, root);
-    const refresh = () => ScrollTrigger.refresh();
-    document.fonts.ready.then(refresh);
-    window.addEventListener('load', refresh);
-    return () => { ctx.revert(); mm.revert(); gsap.ticker.remove(tick); lenis.destroy(); lenisRef.current = null; window.removeEventListener('load', refresh); };
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+    return () => { ctx.revert(); mm.revert(); gsap.ticker.remove(tick); lenis.destroy(); lenisRef.current = null; };
   }, [reduced]);
 
-  useEffect(() => {
-    if (wheelOpen || project !== null) lenisRef.current?.stop();
-    else lenisRef.current?.start();
-  }, [wheelOpen, project]);
-  useEffect(() => () => requestTimers.current.forEach(clearTimeout), []);
-  useEffect(() => {
-    if (reduced || !modalContent.current) return;
-    const ctx = gsap.context(() => { gsap.fromTo(modalContent.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .35 }); });
-    return () => ctx.revert();
-  }, [step, project, reduced]);
+  useEffect(() => { if (wheelOpen || project !== null) lenisRef.current?.stop(); else lenisRef.current?.start(); }, [wheelOpen, project]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
-  const runRequest = () => {
-    requestTimers.current.forEach(clearTimeout);
-    setRequestState('running'); setRequestStation(0);
-    for (let i = 1; i < 6; i++) requestTimers.current.push(setTimeout(() => setRequestStation(i), i * 380));
-    requestTimers.current.push(setTimeout(() => setRequestState('done'), 2400));
+  const traceRequest = () => {
+    timers.current.forEach(clearTimeout); timers.current = [];
+    hoodNodes.forEach((_, i) => timers.current.push(setTimeout(() => setHood(i), i * 330)));
+    timers.current.push(setTimeout(() => setHood(99), hoodNodes.length * 330));
   };
-  const composeMessage = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const text = `LET'S MAKE IDEAS REAL\n\nFrom: ${data.get('name')}\nEmail: ${data.get('email')}\n\n${data.get('message')}\n`;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob); const a = document.createElement('a');
-    a.href = url; a.download = 'lets-build.txt'; a.click(); URL.revokeObjectURL(url); setMessageReady(true);
+  const fakeLoad = () => { setLoading(true); timers.current.push(setTimeout(() => setLoading(false), 1600)); };
+  const compose = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const d = new FormData(e.currentTarget);
+    const blob = new Blob([`SO... WHAT ARE WE BUILDING?\n\nType: ${kind}\nFrom: ${d.get('name')}\nEmail: ${d.get('email')}\n\n${d.get('message')}\n`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'lets-build-it.txt'; a.click(); URL.revokeObjectURL(url); setReady(true);
   };
-  const openProject = (i: number) => { setStep(0); setProject(i); };
-  const currentProject = project === null ? undefined : projects[project];
+  const p = project === null ? undefined : projects[project];
+
   const timelineData = [
-    { title: 'The first “what if?”', content: <><h3>Curiosity came before the code.</h3><p>I started by taking things apart. A website, an interaction, a tiny detail that felt different. I wanted to understand why it worked — then see if I could build my own.</p><div className="timeline-tags mono-label"><span>LEARNING</span><span>BREAKING THINGS</span><span>TRYING AGAIN</span></div></> },
-    { title: 'From pixels to logic', content: <><h3>The screen was only the beginning.</h3><p>Design led me to frontend. Frontend led me to the systems behind it. APIs, databases, authentication — suddenly I wasn’t just making things look right. I was making them work.</p><div className="timeline-tags mono-label"><span>DESIGN → FRONTEND → BACKEND</span></div></> },
-    { title: 'The whole picture', content: <><h3>Not just a feature. A product.</h3><p>The interesting part lives between disciplines. How a decision in the interface changes the data model. How a small interaction changes a big experience. That’s where I like to build.</p><div className="timeline-tags mono-label"><span>PRODUCT THINKING</span><span>CONNECTING THE DOTS</span></div></> },
-    { title: 'Now, and next', content: <><h3>Still asking “what if?”</h3><p>Exploring thoughtful products, creative interfaces, and useful systems. Building things that make someone’s day a little easier — and occasionally building something just to see if I can.</p><div className="hand-note text-signal mt-5">Same curiosity. A bigger toolbox. ↗</div></> }
+    { title: 'Curiosity', content: <><span className="station-tag">LINE 1 · BOARDING</span><h3>It started with “how does this work?”</h3><p>Taking websites apart. Viewing source. Breaking things on purpose.</p></> },
+    { title: 'Code → Design', content: <><span className="station-tag interchange">INTERCHANGE</span><h3>Wrong station. Better route.</h3><p>Code alone felt incomplete, so I switched lines and learned why things feel good.</p></> },
+    { title: 'Frontend → Backend', content: <><span className="station-tag">LINE 2 · UNDERGROUND</span><h3>Then I went underground.</h3><p>APIs, databases, auth, webhooks. The part nobody sees but everybody feels.</p></> },
+    { title: 'Products', content: <><span className="station-tag interchange">INTERCHANGE</span><h3>Features became products.</h3><p>Design, frontend, backend and integrations — one journey, end to end.</p></> },
+    { title: 'Next stop', content: <><span className="station-tag">PLATFORM CHANGE</span><h3>Whatever comes next.</h3><p className="hand-note text-signal">mind the gap ↘</p></> },
   ];
 
-  return <div ref={root} className="portfolio">
-    <div className="grain" aria-hidden="true" />
-    {!reduced && <TargetCursor targetSelector=".cursor-target" hideDefaultCursor={false} spinDuration={5} parallaxOn={false} cursorColor="var(--foreground)" cursorColorOnTarget="var(--primary)" />}
-    <main>
-      <PortfolioIdentity onFollow={() => navigate(1)}/>
-      <div className="narrative-metro page-margin"><div className="metro" aria-label="From idea to deployment">{stations.map((s,i) => <span key={s} className={`metro-station ${i <= activeSection ? 'is-passed' : ''}`}>{s}</span>)}</div></div>
+  const bentoCards = capabilities.map((c, i) => ({ content: <div className="cap-tile cursor-target"><span className="cap-num">{String(i + 1).padStart(2, '0')}</span><h3>{c.label}</h3><div className="cap-demo"><Flow steps={c.flow} live/></div><span className="cap-note hand-note">{c.note}</span></div> }));
 
-      <section id="story" className="section story page-margin">
-        <Kicker number="01">THE STORY</Kicker>
-        <div className="section-heading"><h2 className="display-title">A CURIOUS MIND.<br/><span className="text-muted-foreground">A FEW HAPPY DETOURS.</span></h2><p className="section-intro">Not a straight line. More like the Delhi Metro — a few interchanges, a lot of connections, and always moving forward.</p></div>
+  return <TooltipProvider delayDuration={120}><div ref={root} className="portfolio">
+    <div className="grain" aria-hidden="true"/>
+    {!reduced && <TargetCursor targetSelector=".cursor-target" hideDefaultCursor={false} spinDuration={5} parallaxOn={false} cursorColor="var(--foreground)" cursorColorOnTarget="var(--signal)"/>}
+    <nav className="rail" aria-label="Story progress"><span className="rail-fill" aria-hidden="true"/>{navItems.map((n, i) => <button key={n} className={`rail-stop cursor-target ${i <= active ? 'is-passed' : ''} ${i === active ? 'is-here' : ''}`} onClick={() => navigate(i)} aria-label={`Go to ${n}`}><span>{n}</span></button>)}</nav>
+
+    <main>
+      {/* 01 — WHO AM I? */}
+      <section id="me" className={`film ${reduced ? 'is-static' : ''}`}>
+        <div className="film-stage">
+          <div className="film-grid" aria-hidden="true"/>
+          <span className="film-loc mono-label">NEW DELHI / INDIA · 28.61°N 77.20°E</span>
+          {heroNotes.map((n, i) => <span key={n} className={`film-note hand-note note-${i}`}>{n}</span>)}
+          {reduced ? <div className="film-type">
+            <h1 className="film-make">I MAKE THINGS.</h1>{heroWords.map(w => <p className="film-word" key={w}>{w}</p>)}<p className="film-final">THAT’S BASICALLY ME.</p>
+          </div> : <TextCursor text="✦" spacing={70} maxPoints={6} exitDuration={.5} followMouseDirection={false}><div className="film-type">
+            <h1 className="film-make cursor-target"><span className="mask"><span className="char-line">I MAKE THINGS.</span></span></h1>
+            {heroWords.map(w => <p className="film-word cursor-target" key={w}>{w}</p>)}
+            <p className="film-final cursor-target">THAT’S BASICALLY ME.<svg className="film-sketch" viewBox="0 0 600 40" aria-hidden="true"><path d="M5 30 C 150 10, 300 38, 595 14" pathLength={1} strokeDasharray="1" strokeDashoffset="1"/></svg></p>
+          </div></TextCursor>}
+          <span className="film-hint mono-label">SCROLL — THE FILM STARTS ↓</span>
+          <span className="film-sign mono-label">ANIKET SHARMA</span>
+        </div>
+      </section>
+
+      {/* 02 — STORY */}
+      <section id="story" className="section page-margin">
+        <span className="mono-label kicker">02 / THE ROUTE</span>
+        <h2 className="display reveal"><span className="mask"><span className="char-line">MY BRAIN IS NOT</span></span><span className="mask"><span className="char-line">A STRAIGHT LINE.</span></span></h2>
+        <p className="hand-note text-signal sub">Neither was the journey.</p>
+        <p className="lede">Like the Delhi Metro: multiple lines, unexpected interchanges, wrong stations, getting lost — and eventually reaching somewhere interesting.</p>
+        <svg className="metro-map" viewBox="0 0 1000 260" role="img" aria-label="A metro map of my journey from curiosity to whatever comes next">
+          <path className="line main" d="M20 180 H260 L320 120 H600 L660 180 H980"/>
+          <path className="line branch" d="M320 120 L380 50 H520"/>
+          <path className="line branch b2" d="M600 120 L640 230 H760"/>
+          {metroStations.map((s, i) => { const x = 20 + i * 137; const y = i < 2 ? 180 : i < 5 ? 120 : 180; const fx = Math.min(x, 980); return <g key={s} className="stop"><circle cx={fx} cy={y} r={i === 2 || i === 4 ? 9 : 6}/><text x={fx} y={y + (i % 2 ? -22 : 32)} textAnchor="middle">{s}</text></g>; })}
+          <text x="450" y="38" className="branch-note">wrong station (useful)</text><text x="700" y="250" className="branch-note">got lost, found a shortcut</text>
+        </svg>
         <Timeline data={timelineData} reduced={reduced}/>
       </section>
 
-      <section id="craft" className="section craft page-margin">
-        <Kicker number="02">THE CRAFT</Kicker>
-        <div className="section-heading"><h2 className="display-title">GOOD DESIGN.<br/>REAL ENGINEERING.</h2><p className="section-intro">I don’t see two different disciplines.<br/>I see two halves of the same idea.</p></div>
-        <div className="craft-layout"><div className="craft-notebook"><div className="craft-side"><h3>FEEL.</h3><p>HIERARCHY<br/>INTERACTION<br/>THE HUMAN BIT</p></div><span className="craft-intersection">×</span><div className="craft-side"><h3>FUNCTION.</h3><p>LOGIC<br/>ARCHITECTURE<br/>THE WORKING BIT</p></div><div className="craft-sketch hand-note">the sweet spot ↗</div></div><div className="craft-flow"><FlowingMenu items={[{link:'#work',text:'Interfaces with intention',image:chalkSystems},{link:'#experiments',text:'Interactions with personality',image:chalkSystems},{link:'#systems',text:'Systems with a backbone',image:chalkSystems},{link:'#contact',text:'Ideas into real things',image:chalkSystems}]} onSelect={index => navigate([3,5,4,6][index] ?? 2)} textColor="var(--chalk)" bgColor="transparent" marqueeBgColor="var(--chalk)" marqueeTextColor="var(--ink)" borderColor="var(--border)" reduced={reduced}/></div></div>
+      {/* 03 — CRAFT / THINGS I BUILD */}
+      <section id="craft" className="section page-margin">
+        <span className="mono-label kicker">03 / THINGS I BUILD</span>
+        <h2 className="display reveal"><span className="mask"><span className="char-line">SOME THINGS I BUILD</span></span><span className="mask"><span className="char-line">ARE SERIOUS.</span></span></h2>
+        <h2 className="display reveal ghost"><span className="mask"><span className="char-line">SOME ARE NOT.</span></span></h2>
+        <p className="lede">Hover a tile. Each one shows what actually happens inside.</p>
+        <div className="cap-bento"><MagicBento cards={bentoCards} textAutoHide={false} disableAnimations={reduced} enableSpotlight={!reduced} enableStars={false} enableTilt={false} enableMagnetism={!reduced} clickEffect={!reduced} glowColor="var(--signal)" spotlightRadius={260}/></div>
       </section>
 
-      <section id="work" className="section work page-margin">
-        <Kicker number="03">THE WORK</Kicker><div className="section-heading work-heading"><h2 className="display-title">IDEAS, WITH<br/><span className="text-primary">THEIR SLEEVES UP.</span></h2><p className="section-intro">A look at the entire picture.<br/>The problem. The decisions. The thing it becomes.<br/><span className="mono-label">SELECTED CONCEPT STUDIES / 01—02</span></p></div>
-        {projects.map((p,i) => <article className="project" key={p.name}><div className="project-top"><div><span className="mono-label text-muted-foreground">0{i+1} / CONCEPT STUDY</span><h3 className="project-title">{p.name}<span className="text-primary"> ↗</span></h3></div><div className="project-meta mono-label"><span>{p.type}</span><span>DESIGN + ENGINEERING</span></div></div><div className={`project-stage ${p.className}`}><BorderGlow className="product-window" backgroundColor="var(--ink)" glowColor="var(--sage)" colors={["var(--sage)","var(--signal)","var(--chalk)"]} borderRadius={4} glowRadius={18} glowIntensity={.5} fillOpacity={.05}><div className="window-bar"><i/><i/><i/><span>{p.brand.replace(' ','')}.concept / overview</span></div><div className="product-body"><div className="product-brand"><p.icon/>{p.brand}</div><div className="product-greeting">{p.screenTitle}</div><div className="product-subline">{p.screenSubtitle}</div><div className="product-stats">{p.metrics.map((m,j) => <div key={m} className="product-stat"><strong>{m}</strong><span>{p.metricLabels[j]}</span></div>)}</div><div className="product-chart" aria-hidden="true">{Array.from({length:16},(_,j) => <i key={j}/>)}</div></div></BorderGlow><div className="stage-story"><div className="mono-label">FROM A WHAT-IF TO A WORKING IDEA</div><h3>{p.tagline.split('\n').map((line,j) => <span className="block" key={j}>{line}</span>)}</h3><p>{p.intro}</p><Magnet disabled={reduced} padding={20} magnetStrength={5}><SpecularButton size="sm" radius={2} className="cursor-target mono-label" textColor="var(--chalk)" lineColor="var(--chalk)" baseColor="var(--border)" tint="var(--chalk)" tintOpacity={.02} followMouse={!reduced} onClick={() => openProject(i)}>EXPLORE THE CONCEPT <ArrowUpRight/></SpecularButton></Magnet></div></div><div className="project-steps">{projectSteps.map((s,j) => <span className="inline-flex gap-3 items-center" key={s}>{s.toUpperCase()}{j < 5 && <ArrowRight/>}</span>)}</div></article>)}
+      {/* 04 — WORK / MOMOS */}
+      <section id="work" className="section momos">
+        <div className="page-margin">
+          <span className="mono-label kicker">04 / THE KITCHEN</span>
+          <h2 className="display reveal"><span className="mask"><span className="char-line">PROJECTS ARE</span></span><span className="mask"><span className="char-line">LIKE MOMOS.</span></span></h2>
+          <div className="momo-lines">{['Sometimes they’re hot.', 'Sometimes they’re a little messy.', 'Sometimes you burn your tongue.', 'Sometimes you wonder why you ordered 30.', 'But when they’re good, you immediately want another plate.'].map(l => <p className="momo-line" key={l}>{l}</p>)}</div>
+        </div>
+        <div className="project-menu"><FlowingMenu items={projects.map((x, i) => ({ link: `#${x.id}`, text: `0${i + 1} — ${x.name} · ${x.kind}`, image: chalkSystems }))} onSelect={i => { setStage(0); setProject(i); }} textColor="var(--chalk)" bgColor="transparent" marqueeBgColor="var(--signal)" marqueeTextColor="var(--ink)" borderColor="var(--border)" reduced={reduced}/></div>
+        <div className="page-margin plate-row">
+          {projects.map((x, i) => <BorderGlow key={x.id} className="plate" backgroundColor="var(--background)" glowColor="var(--signal)" colors={['var(--signal)', 'var(--metro)', 'var(--chalk)']} borderRadius={6} glowRadius={20} glowIntensity={.6} fillOpacity={.04}><button className="plate-btn cursor-target" onClick={() => { setStage(0); setProject(i); }}><span className="mono-label">0{i + 1} / {x.kind}</span><strong>{x.name}</strong><span className="hand-note text-signal">{x.status}</span></button></BorderGlow>)}
+        </div>
+        <div className="page-margin leftovers"><FolderFloat trigger="hover" label="Leftovers" sublabel="small artifacts" items={['Chai timer', 'Metro rhythm', 'Cursor toys']} width={170} height={112} radius={6} spread={110} lift={44} physics={!reduced} folderColor="var(--surface)" frontColor="var(--signal)" paperColor="var(--chalk)" itemColor="var(--chalk)" itemTextColor="var(--ink)" labelColor="var(--ink)"/><span className="hand-note">needs more chutney →</span></div>
       </section>
 
-      <section id="systems" className="section systems page-margin"><Kicker number="04">UNDER THE HOOD</Kicker><div className="section-heading"><h2 className="display-title">THE BEAUTY IN<br/><span className="text-muted-foreground">WHAT YOU DON’T SEE.</span></h2><p className="section-intro">A lovely interface means nothing if the system behind it falls apart. I like to know where every request goes.</p></div><div className="system-diagram">{[{icon:Code2,label:'INTERFACE',sub:'React / UI'},{icon:Braces,label:'API LAYER',sub:'Validate / route'},{icon:Server,label:'SERVER',sub:'Logic / auth'},{icon:Database,label:'DATABASE',sub:'Persist / query'},{icon:Cloud,label:'INTEGRATIONS',sub:'Connect / sync'},{icon:Check,label:'RESPONSE',sub:'Return / render'}].map((n,i) => <div className="contents" key={n.label}><div className={`system-node ${requestStation === i ? 'text-primary' : ''}`}><n.icon/><span>{n.label}</span><span className="text-muted-foreground text-[9px]">{n.sub}</span></div>{i < 5 && <div className="system-connector" aria-hidden="true"/>}</div>)}</div><div className="system-console"><div><div className="console-message" aria-live="polite">{requestState === 'idle' ? '> ready when you are_' : requestState === 'running' ? `> ${['validating input…','routing request…','checking permissions…','reading data…','syncing services…','returning response…'][requestStation] ?? 'processing…'}` : '> 200 OK · full journey complete ✓'}</div><Button variant="ghost" size="sm" className="mt-3 px-0 cursor-target mono-label" onClick={runRequest} disabled={requestState === 'running'}>{requestState === 'done' ? <RotateCcw/> : <Play/>}{requestState === 'running' ? 'REQUEST IN FLIGHT' : requestState === 'done' ? 'RUN IT AGAIN' : 'FOLLOW A REQUEST'}</Button></div><p className="console-desc">Validate the input. Respect the permissions. Keep the data safe. Handle the failures.<br/><span className="mono-label">INTERACTIVE ARCHITECTURE SIMULATION</span></p></div></section>
+      {/* 05 — UNDER THE HOOD */}
+      <section className="hood">
+        <div className="page-margin">
+          <p className="hood-title-a display">THE PRETTY PART IS</p><p className="hood-title-b display ghost">ONLY HALF THE STORY.</p>
+          <h2 className="display hood-h">UNDER THE HOOD.</h2>
+          <div className="hood-grid">
+            <div className={`hood-cubes ${reduced ? 'is-static' : ''}`}><Cubes gridSize={7} maxAngle={40} radius={3} autoAnimate={!reduced} rippleOnClick={!reduced} borderStyle="1px solid var(--muted-foreground)" faceColor="var(--background)" rippleColor="var(--signal)" cellGap={5}/></div>
+            <div className="hood-system">
+              <div className="hood-nodes">{hoodNodes.map((n, i) => <span key={n} className={`hood-node ${hood >= i ? 'is-hit' : ''}`}>{n}</span>)}</div>
+              <div className="hood-console mono-label" aria-live="polite">{hood < 0 ? '> idle. press the button, watch the request travel_' : hood === 99 ? '> 200 OK · deployed · nobody noticed (good)' : `> ${hoodNodes[hood]?.toLowerCase()} … ok`}</div>
+              <Magnet disabled={reduced} padding={30} magnetStrength={5}><Button variant="chalk" className="cursor-target mono-label" onClick={traceRequest}>{hood === 99 ? <RotateCcw/> : <Play/>}{hood === 99 ? 'SEND ANOTHER' : 'TRACE A REQUEST'}</Button></Magnet>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <section id="experiments" className="section experiments page-margin"><Kicker number="05">EXPERIMENTS</Kicker><div className="section-heading"><h2 className="display-title">NO BRIEF.<br/>JUST <span className="text-signal">“WHAT IF?”</span></h2><p className="section-intro">Small explorations. Happy accidents.<br/>Things I make just to see if I can.</p></div><PortfolioExperiments reduced={reduced}/><div className="hand-note text-signal mt-9 text-right">best served with momos & a questionable sleep schedule.</div></section>
+      {/* 06 — EXPERIMENTS */}
+      <section id="experiments" className="section page-margin">
+        <span className="mono-label kicker">06 / THE PLAYGROUND</span>
+        <h2 className="display reveal"><span className="mask"><span className="char-line">I SOMETIMES BUILD THINGS</span></span><span className="mask"><span className="char-line">JUST TO SEE IF THEY BREAK.</span></span></h2>
+        <PortfolioExperiments reduced={reduced}/>
+      </section>
 
-      <section id="contact" className="section contact page-margin"><Kicker number="06">THE NEXT CHAPTER</Kicker><div className="contact-header"><h2 className="contact-title">WHAT ARE<br/>WE <span>BUILDING?</span></h2><span className="contact-note hand-note">A good idea usually<br/>starts with a conversation. ↙</span></div><form className="contact-form" ref={formRef} onSubmit={composeMessage} onChange={() => setMessageReady(false)}><div className="form-field"><label htmlFor="name">01 / YOUR NAME</label><input id="name" name="name" placeholder="Who’s on the other side?" autoComplete="name" required maxLength={100}/></div><div className="form-field"><label htmlFor="email">02 / YOUR EMAIL</label><input id="email" name="email" type="email" placeholder="Somewhere I can say hello." autoComplete="email" required maxLength={254}/></div><div className="form-field full"><label htmlFor="message">03 / THE IDEA</label><textarea id="message" name="message" placeholder="The messy version is welcome." rows={2} required maxLength={5000}/></div><div className="form-actions"><div className="sling-composer"><SlingButton ariaLabel="Save your hello" onSend={() => formRef.current?.requestSubmit()} size={54} armAt={35} maxPull={85} flight={70} particles={8} className="cursor-target" padColor="var(--primary)" iconColor="var(--ink)" accentColor="var(--signal)" wellColor="var(--secondary)" bandColor="var(--border)">{messageReady ? <Check/> : <Download/>}</SlingButton><span className="mono-label">{messageReady ? 'MESSAGE SAVED' : 'SAVE YOUR HELLO'}</span></div><span className="form-notice" role="status">{messageReady ? 'Your message draft has downloaded. Nothing has been sent.' : 'Saves a message draft. Direct delivery is not connected yet.'}</span></div></form></section>
+      {/* 07 — DELHI */}
+      <section className="delhi">
+        <div className="delhi-strip">
+          <div className="delhi-intro"><span className="mono-label kicker">07 / ORIGIN</span><h2 className="display">MADE IN<br/>DELHI.</h2><p className="lede">A city where everyone has a shortcut, every road has three alternate routes, and somehow there’s always traffic.</p></div>
+          {[['CURRENT LOCATION', 'NEW DELHI'], ['CURRENT FUEL', chai ? 'CHAI' : 'COLD COFFEE (RARE)'], ['CURRENT PROBLEM', 'WHY IS THIS API DOING THAT?'], ['LUNCH', 'CHOLE BHATURE'], ['WEATHER', 'DELHI WINTER · FOG MODE'], ['COMMUTE', 'METRO > AUTO > WALK']].map(([k, v]) => <div className="delhi-sign cursor-target" key={k}><span className="mono-label">{k}</span><strong>{v}</strong></div>)}
+          <div className="cp-ring" aria-hidden="true"><span>CONNAUGHT PLACE · INNER CIRCLE · OUTER CIRCLE ·</span></div>
+        </div>
+      </section>
+
+      {/* 08 — DETAILS */}
+      <section className="section page-margin details">
+        <span className="mono-label kicker">08 / THE SMALL STUFF</span>
+        <h2 className="display reveal"><span className="mask"><span className="char-line">THE LITTLE THINGS</span></span><span className="mask"><span className="char-line">MATTER.</span></span></h2>
+        <div className="detail-grid">
+          <div className="detail"><span className="mono-label">TOGGLE</span><label className="detail-row"><Switch checked={chai} onCheckedChange={setChai} aria-label="Chai mode"/>{chai ? 'chai mode: on' : 'chai mode: off (why?)'}</label></div>
+          <div className="detail"><span className="mono-label">TOOLTIP</span><Tooltip><TooltipTrigger asChild><button className="detail-chip cursor-target">hover me</button></TooltipTrigger><TooltipContent>told you it was small.</TooltipContent></Tooltip></div>
+          <div className="detail"><span className="mono-label">LOADING</span><button className="detail-chip cursor-target" onClick={fakeLoad} aria-busy={loading}>{loading ? <span className="dots" aria-label="Loading"><i/><i/><i/></span> : 'load something'}</button></div>
+          <div className="detail"><span className="mono-label">MAGNET</span><Magnet disabled={reduced} padding={50} magnetStrength={3}><span className="detail-chip">come closer</span></Magnet></div>
+          <div className="detail"><span className="mono-label">SPECULAR</span><SpecularButton size="sm" radius={4} className="cursor-target mono-label" textColor="var(--chalk)" lineColor="var(--chalk)" baseColor="var(--border)" tint="var(--signal)" tintOpacity={.06} followMouse={!reduced}>catch the light</SpecularButton></div>
+          <div className="detail"><span className="mono-label">HOVER</span><span className="detail-underline cursor-target">a line that knows you’re here</span></div>
+        </div>
+      </section>
+
+      {/* 09 — CONTACT */}
+      <section id="contact" className="section page-margin contact">
+        <h2 className="display reveal"><span className="mask"><span className="char-line ghost">SO...</span></span><span className="mask"><span className="char-line">WHAT ARE WE BUILDING?</span></span></h2>
+        <div className="kind-row" role="radiogroup" aria-label="What kind of thing">{projectTypes.map(t => <button key={t} role="radio" aria-checked={kind === t} className={`kind cursor-target ${kind === t ? 'is-on' : ''}`} onClick={() => { setKind(t); setReady(false); }}>{t}</button>)}</div>
+        <form ref={formRef} className="contact-form" onSubmit={compose} onChange={() => setReady(false)}>
+          <div className="form-field"><label htmlFor="name">YOUR NAME</label><input id="name" name="name" required maxLength={100} placeholder="who’s ordering?" autoComplete="name"/></div>
+          <div className="form-field"><label htmlFor="email">YOUR EMAIL</label><input id="email" name="email" type="email" required maxLength={254} placeholder="where do I send the momos?" autoComplete="email"/></div>
+          <div className="form-field full"><label htmlFor="message">THE {kind}</label><textarea id="message" name="message" rows={2} required maxLength={5000} placeholder="the messy version is welcome."/></div>
+          <div className="form-actions">
+            <div className="sling-composer"><SlingButton ariaLabel="Fling your idea" onSend={() => formRef.current?.requestSubmit()} size={54} armAt={35} maxPull={85} flight={70} particles={8} className="cursor-target" padColor="var(--signal)" iconColor="var(--ink)" accentColor="var(--signal)" wellColor="var(--secondary)" bandColor="var(--border)">{ready ? <Check/> : <Download/>}</SlingButton><span className="mono-label">PULL & FLING</span></div>
+            <SpecularButton size="md" radius={4} className="cursor-target" textColor="var(--ink)" lineColor="var(--ink)" baseColor="var(--signal)" tint="var(--chalk)" tintOpacity={.2} followMouse={!reduced} type="submit">LET’S BUILD IT <ArrowRight/></SpecularButton>
+          </div>
+          <span className="form-notice" role="status">{ready ? 'Your draft downloaded. Nothing was sent yet.' : 'Saves a message draft — direct delivery isn’t connected yet.'}</span>
+        </form>
+      </section>
+
+      {/* FINALE */}
+      <section className="finale page-margin" aria-label="Closing">
+        <p className="finale-line">DESIGN IT.</p><p className="finale-line">BUILD IT.</p><p className="finale-line text-signal">SHIP IT.</p>
+        <span className="mono-label finale-route">NEW DELHI → EVERYWHERE</span>
+      </section>
     </main>
-    <footer className="footer page-margin"><div className="mono-label">ANIKET SHARMA.<br/>BUILT IN NEW DELHI, INDIA.</div><div className="footer-fuel mono-label"><Coffee/><span>FUEL: CHAI + CODE</span></div><span className="mono-label">ALWAYS A WORK IN PROGRESS. ↗</span></footer>
-    <span className="wheel-caption mono-label">{String(activeSection+1).padStart(2,'0')} / EXPLORE</span>
-    <Dialog.Root open={wheelOpen} onOpenChange={setWheelOpen}><Dialog.Trigger asChild><Button variant="chalk" className="wheel-trigger cursor-target" aria-label="Open navigation wheel" title="Explore the notebook"><Compass/></Button></Dialog.Trigger><Dialog.Portal><Dialog.Content className="wheel-panel" data-lenis-prevent><Dialog.Title className="mono-label text-muted-foreground">EVERYTHING IS CONNECTED.</Dialog.Title><Dialog.Description className="sr-only">Select a chapter with the wheel, then choose Go to chapter.</Dialog.Description><div className="wheel-object"><OptionWheel items={sections} defaultSelected={selected} fontSize={2.3} spacing={1.4} inset={40} tilt={13} curve={1.5} blur={0} fade={.21} minOpacity={.12} onChange={i => setSelected(i)} textColor="var(--muted-foreground)" activeColor="var(--foreground)"/></div><div className="wheel-panel-foot"><Button variant="ghost" size="sm" onClick={() => setWheelOpen(false)} aria-label="Close navigation"><X/></Button><Button variant="ghost" size="sm" className="mono-label cursor-target" onClick={() => navigate(selected)}>GO TO {sections[selected]} <ArrowRight/></Button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
-    <Dialog.Root open={project !== null} onOpenChange={open => { if (!open) setProject(null); }}><Dialog.Portal><Dialog.Overlay className="case-overlay"/><Dialog.Content className="case-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[111] max-w-[calc(100vw-24px)]" data-lenis-prevent>{currentProject && <><div className="case-header"><div><span className="mono-label text-primary">CONCEPT STUDY / THE WHOLE PICTURE</span><Dialog.Title>{currentProject.name}</Dialog.Title><Dialog.Description className="mono-label text-muted-foreground">{currentProject.type} · ILLUSTRATIVE CONCEPT</Dialog.Description></div><Dialog.Close asChild><Button variant="ghost" size="icon" aria-label="Close concept study"><X/></Button></Dialog.Close></div><div className="case-tabs" role="tablist" aria-label="Concept study stages">{projectSteps.map((s,i) => <Button key={s} variant={step === i ? 'signal' : 'ghost'} size="sm" className="mono-label" role="tab" aria-selected={step === i} aria-controls="case-panel" id={`case-tab-${i}`} onClick={() => setStep(i)}>{s}</Button>)}</div><div className="case-content" ref={modalContent} id="case-panel" role="tabpanel" aria-labelledby={`case-tab-${step}`}><h3>{projectSteps[step]}<span className="text-primary">.</span></h3><p>{currentProject.steps[step]}</p></div><div className="case-footer"><span className="mono-label text-muted-foreground">0{step+1} / 06</span><Button variant="chalk" size="sm" onClick={() => setStep((step+1)%6)}>{step === 5 ? 'BACK TO THE BEGINNING' : 'NEXT CHAPTER'}<ArrowRight/></Button></div></>}</Dialog.Content></Dialog.Portal></Dialog.Root>
-  </div>;
+    <footer className="footer page-margin"><span className="mono-label">ANIKET SHARMA · © 2026</span><span className="mono-label">FUEL: CHAI + CODE</span><span className="mono-label">MIND THE GAP ↗</span></footer>
+
+    <Dialog.Root open={wheelOpen} onOpenChange={setWheelOpen}><Dialog.Trigger asChild><Button variant="chalk" className="wheel-trigger cursor-target" aria-label="Open navigation wheel"><Compass/></Button></Dialog.Trigger><Dialog.Portal><Dialog.Content className="wheel-panel" data-lenis-prevent><Dialog.Title className="mono-label text-muted-foreground">CHOOSE A STATION</Dialog.Title><Dialog.Description className="sr-only">Spin the wheel then go.</Dialog.Description><div className="wheel-object"><OptionWheel items={navItems} defaultSelected={selected} fontSize={2.3} spacing={1.4} inset={40} tilt={13} curve={1.5} blur={0} fade={.21} minOpacity={.12} onChange={i => setSelected(i)}/></div><div className="wheel-panel-foot"><Button variant="ghost" size="sm" onClick={() => setWheelOpen(false)} aria-label="Close"><X/></Button><Button variant="ghost" size="sm" className="mono-label cursor-target" onClick={() => navigate(selected)}>GO TO {navItems[selected]} <ArrowRight/></Button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
+
+    <Dialog.Root open={project !== null} onOpenChange={o => { if (!o) setProject(null); }}><Dialog.Portal><Dialog.Overlay className="case-overlay"/><Dialog.Content className="case-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[111] max-w-[calc(100vw-24px)]" data-lenis-prevent>{p && <>
+      <div className="case-header"><div><span className="mono-label text-signal">{p.status}</span><Dialog.Title>{p.name}</Dialog.Title><Dialog.Description className="mono-label text-muted-foreground">{p.kind}</Dialog.Description></div><Dialog.Close asChild><Button variant="ghost" size="icon" aria-label="Close case study"><X/></Button></Dialog.Close></div>
+      <Flow steps={p.flow} live={!reduced}/>
+      <div className="case-tabs" role="tablist">{caseStages.map((s, i) => <button key={s} role="tab" aria-selected={stage === i} className={`case-stop ${stage >= i ? 'is-passed' : ''}`} onClick={() => setStage(i)}><i/><span>{s}</span></button>)}</div>
+      <div className="case-content" key={stage}><h3>{caseStages[stage]}</h3><p>{p.stages[stage]}</p></div>
+      <div className="case-footer"><span className="mono-label text-muted-foreground">STATION {stage + 1} / 7</span><Button variant="chalk" size="sm" onClick={() => setStage((stage + 1) % 7)}>{stage === 6 ? 'BACK TO START' : 'NEXT STATION'}<ArrowRight/></Button></div>
+    </>}</Dialog.Content></Dialog.Portal></Dialog.Root>
+  </div></TooltipProvider>;
 }
