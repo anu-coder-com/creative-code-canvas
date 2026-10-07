@@ -105,7 +105,7 @@ export function Portfolio() {
       gsap.from('.identity-intro', { y: 12, opacity: 0, duration: .8, delay: .35, clearProps: 'all' });
       mm.add('(min-width: 768px)', () => {
         gsap.to('.identity-name', { y: -18, ease: 'none', scrollTrigger: { trigger: '.identity-shell', start: 'top top', end: 'bottom top', scrub: .7 } });
-        gsap.to('.identity-verbs', { yPercent: -80, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .5 } });
+        gsap.to('.identity-verbs', { y: -60, ease: 'steps(4)', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .5 } });
         gsap.to('.craft-notebook', { scrollTrigger: { trigger: '.craft-notebook', start: 'top 30%', endTrigger: '.craft', end: 'bottom 65%', pin: true, pinSpacing: false } });
       });
       gsap.utils.toArray<HTMLElement>('.section-heading, .craft-notebook, .stage-story, .system-console').forEach(el => {

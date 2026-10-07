@@ -280,7 +280,7 @@
 .identity-top { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; padding: 30px 46px; border-bottom: 1px solid var(--border); }
 .identity-top .mark-symbol { display: block; background: var(--foreground); color: var(--background); font-size: 26px; padding: 0 7px; line-height: 1.15; }
 .identity-main { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 35px 80px; text-align: center; }
-.identity-name { font: 800 158px/.86 var(--font-display); text-transform: uppercase; }
+.identity-name { font: 800 40px/.86 var(--font-display); text-transform: uppercase; max-width: 100%; }
 .identity-name-line { display: block; }
 .identity-name-line + .identity-name-line { margin-top: 6px; }
 .identity-aside { position: absolute; left: 46px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 36px; writing-mode: vertical-rl; color: var(--muted-foreground); font-size: 9px; }
@@ -293,7 +293,8 @@
 .identity-spec > span { font-size: 8px; color: var(--muted-foreground); }
 .identity-spec strong { font-weight: 600; }
 .identity-statement { overflow: hidden; }
-.identity-verbs { height: 15px; }
+.identity-verb-window { height: 15px; overflow: hidden; }
+.identity-verbs { height: 75px; }
 .identity-verbs strong { display: block; height: 15px; white-space: nowrap; }
 .identity-follow { border-radius: 0; height: 100%; min-height: 88px; padding: 16px; display: flex; gap: 12px; font: 600 10px var(--font-mono); white-space: normal; }
 .identity-follow:hover svg { transform: translateY(3px); }

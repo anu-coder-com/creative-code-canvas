@@ -299,7 +299,7 @@ const Cubes: React.FC<CubesProps> = ({
   const wrapperStyle = {
     '--cube-face-border': borderStyle,
     '--cube-face-bg': faceColor,
-    '--cube-face-shadow': shadow === true ? '0 0 6px rgba(0,0,0,.5)' : shadow || 'none',
+    '--cube-face-shadow': shadow === true ? '0 0 6px color-mix(in srgb, var(--ink) 50%, transparent)' : shadow || 'none',
     ...(cubeSize
       ? {
           width: `${gridSize * cubeSize}px`,
