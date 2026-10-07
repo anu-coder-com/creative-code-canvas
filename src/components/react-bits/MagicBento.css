@@ -139,8 +139,8 @@
   padding: 6px;
   background: radial-gradient(
     var(--glow-radius) circle at var(--glow-x) var(--glow-y),
-    color-mix(in srgb, var(--ink) 20%, transparent) * 0.8)) 0%,
-    color-mix(in srgb, var(--ink) 20%, transparent) * 0.4)) 30%,
+    color-mix(in srgb, var(--sage) calc(var(--glow-intensity) * 80%), transparent) 0%,
+    color-mix(in srgb, var(--sage) calc(var(--glow-intensity) * 40%), transparent) 30%,
     transparent 60%
   );
   border-radius: inherit;
