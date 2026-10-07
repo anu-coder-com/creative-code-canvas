@@ -210,7 +210,8 @@ const OptionWheel = ({
       if (idx !== selectedRef.current) {
         selectedRef.current = idx;
         setSelectedIndex(idx);
-        onChangeRef.current?.(idx, cfg.items[idx]);
+        const item = cfg.items[idx];
+        if (item !== undefined) onChangeRef.current?.(idx, item);
         playTick();
       }
       startLoop();

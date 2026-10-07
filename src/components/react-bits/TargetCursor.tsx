@@ -318,11 +318,13 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
           ];
           const tl = gsap.timeline();
           corners.forEach((corner, index) => {
+            const position = positions[index];
+            if (!position) return;
             tl.to(
               corner,
               {
-                x: positions[index].x,
-                y: positions[index].y,
+                x: position.x,
+                y: position.y,
                 duration: 0.3,
                 ease: 'power3.out'
               },

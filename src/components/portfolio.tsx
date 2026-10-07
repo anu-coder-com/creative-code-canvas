@@ -70,7 +70,9 @@ export function Portfolio() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const navigate = (index: number) => {
-    const target = document.getElementById(ids[index]);
+    const id = ids[index];
+    if (!id) return;
+    const target = document.getElementById(id);
     if (!target) return;
     setSelected(index); setWheelOpen(false);
     if (lenisRef.current) lenisRef.current.scrollTo(target, { offset: 0, duration: 1.3 });
@@ -99,12 +101,13 @@ export function Portfolio() {
       gsap.from('.hero-line', { y: 40, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', clearProps: 'all' });
       gsap.from('.hero-visual', { opacity: 0, duration: 1.8, delay: .5, clearProps: 'all' });
       mm.add('(min-width: 768px)', () => {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=850', scrub: .7, pin: true, anticipatePin: 1 } });
+        const tl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom 25%', scrub: .7 } });
         tl.to('.hero-line', { y: -60, opacity: 0, stagger: .09, duration: 1 }, .1)
           .to('.hero-visual', { x: 70, y: -25, opacity: .3, duration: 1 }, .1)
           .set('.hero-final', { visibility: 'visible' }, .8)
           .fromTo('.hero-final', { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, .8)
           .to('.hero-note', { x: -40, y: 20, duration: 1 }, .5);
+        gsap.to('.craft-notebook', { scrollTrigger: { trigger: '.craft-notebook', start: 'top 30%', endTrigger: '.craft', end: 'bottom 65%', pin: true, pinSpacing: false } });
       });
       mm.add('(max-width: 767px)', () => {
         gsap.to('.hero-visual', { y: -25, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });

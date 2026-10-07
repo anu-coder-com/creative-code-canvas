@@ -72,7 +72,7 @@
 .section-kicker { display: flex; align-items: center; gap: 16px; font: 11px var(--font-mono); text-transform: uppercase; }
 .section-kicker:before { content: ''; height: 1px; width: 35px; background: currentColor; }
 .display-title { font: 700 88px/.94 var(--font-display); text-transform: uppercase; }
-.hero { position: relative; min-height: 850px; height: min(950px, 100svh); padding-top: 36px; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 90px 90px; }
+.hero { position: relative; min-height: 780px; height: min(950px, 92svh); padding-top: 36px; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 90px 90px; }
 .hero-top { display: flex; justify-content: space-between; align-items: start; }
 .personal-mark { display: flex; align-items: center; gap: 13px; }
 .mark-symbol { font: 600 27px var(--font-mono); color: var(--primary); }

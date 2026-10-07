@@ -59,7 +59,7 @@ const ScrambledText: React.FC<ScrambledTextProps> = ({
             overwrite: true,
             duration: duration * (1 - dist / radius),
             scrambleText: {
-              text: (c as HTMLElement).dataset.content || '',
+              text: (c as HTMLElement).dataset['content'] || '',
               chars: scrambleChars,
               speed
             },
