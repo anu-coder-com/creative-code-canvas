@@ -8,3 +8,9 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Portfolio architecture
+- Keep the portfolio as one explicitly scroll-driven narrative at `/`; section anchors belong to the continuous GSAP storytelling experience.
+- Vendor attributed React Bits components in `src/components/react-bits` and customize semantic styling while preserving their interaction logic.
+- Use GSAP ScrollTrigger and Lenis for storytelling; Motion is limited to the original Aceternity Timeline implementation.
+- Keep illustrative project content labeled as concept work and contact as a local message composer until the owner supplies verified projects and a destination.
