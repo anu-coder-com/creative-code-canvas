@@ -245,3 +245,50 @@
   .hero-note { font-size: 19px; max-width: 270px; }
   .wheel-caption { bottom: 92px; }
 }
+
+/* Additional React Bits — editorial, restrained, and part of the notebook. */
+.craft-flow { height: 330px; min-width: 0; }
+.craft-flow .menu__item-link { justify-content: flex-start; font: 600 28px var(--font-display); white-space: normal; text-align: left; padding: 12px 0; }
+.craft-flow .flowing-link-button { display: block; height: 100%; border-radius: 0; padding: 0; }
+.craft-flow .marquee span { font: 600 30px var(--font-display); padding: 0 20px; }
+.craft-flow .marquee__img { height: 48px; width: 85px; border-radius: 2px; margin: 0 16px; padding: 0; mix-blend-mode: screen; }
+.product-window.border-glow-card { box-shadow: var(--shadow-overlay); }
+.product-window .border-glow-inner { overflow: visible; }
+.specular-button { border: 1px solid var(--border); box-shadow: none; }
+.specular-button__label { display: inline-flex; align-items: center; gap: 10px; }
+.specular-button--sm { font-size: 10px; height: 40px; padding: 12px 20px; }
+.specular-button__label svg { width: 16px; height: 16px; }
+.portfolio-bento { margin-top: 55px; }
+.portfolio-bento .card-grid { max-width: none; width: 100%; padding: 0; margin: 0; gap: 24px; font-size: 16px; grid-template-columns: repeat(3,minmax(0,1fr)); }
+.portfolio-bento .magic-bento-card { padding: 0; border-radius: 4px; aspect-ratio: auto; min-height: 305px; border-color: var(--border); }
+.portfolio-bento .magic-bento-card:nth-child(n) { grid-column: auto; grid-row: auto; }
+.portfolio-bento .magic-bento-card:nth-child(3) { grid-row: span 2; }
+.portfolio-bento .magic-bento-card:nth-child(3) .experiment-play { flex: 1; min-height: 300px; padding-top: 70px; }
+.portfolio-bento .magic-bento-card:nth-child(5) { grid-column: span 2; }
+.portfolio-bento .experiment-foot { min-height: 65px; gap: 10px; }
+.portfolio-bento .experiment-foot h3 { font-size: 13px; }
+.portfolio-bento .experiment-foot span { flex-shrink: 0; font-size: 8px; }
+.portfolio-bento .magic-bento-card--border-glow::after { padding: 1px; background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y), color-mix(in srgb, var(--sage) calc(var(--glow-intensity) * 65%), transparent), transparent 60%); }
+.portfolio-bento .magic-bento-card:hover, .portfolio-bento .particle-container:hover { box-shadow: none; transform: none; }
+.portfolio-bento .experiment-control { font-size: 9px; max-width: calc(100% - 30px); white-space: normal; }
+.portfolio-bento .folder-float__item { font: 10px var(--font-mono); border-radius: 4px; }
+.portfolio-bento .dodge-field__pill { border-radius: 2px; font-size: 10px; height: 44px; padding: 0 15px; }
+.cube-play { width: 210px; height: 190px; display: grid; place-items: center; }
+.cube-play .default-animation { width: 170px; }
+.cube-play .cube::before { inset: -5px; }
+.cube-play.is-static { pointer-events: none; }
+.trail-stage { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; height: 100%; }
+.trail-word { font: 500 36px var(--font-hand); color: var(--signal); display: flex; align-items: center; gap: 9px; }
+.text-cursor-item { font: 24px var(--font-hand); color: var(--sage); }
+.sling-composer { display: flex; align-items: center; gap: 22px; min-height: 74px; margin: 10px 10px 10px 6px; }
+.sling-button__pad:focus-visible { outline: 2px solid var(--signal); outline-offset: 8px; }
+.folder-float__trigger:focus-visible, .folder-float__item:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+@media(max-width:1050px) { .craft-flow .menu__item-link { font-size: 23px; }.portfolio-bento .card-grid { gap: 14px; } }
+@media(max-width:767px) {
+ .craft-flow { height: 290px; }.craft-flow .menu__item-link { font-size: 25px; }
+ .portfolio-bento .card-grid { grid-template-columns: 1fr; gap: 24px; }
+ .portfolio-bento .magic-bento-card:nth-child(n) { grid-column: auto; grid-row: auto; }
+ .portfolio-bento .magic-bento-card:nth-child(3) .experiment-play { min-height: 320px; }
+ .portfolio-bento .experiment-foot h3 { font-size: 14px; }
+}
+@media(prefers-reduced-motion:reduce) { .marquee, .edge-light, .text-cursor-inner { display: none; }.border-glow-card:before, .border-glow-card:after, .magic-bento-card:after { display: none; } }
