@@ -13,6 +13,7 @@ import BorderGlow from '@/components/react-bits/BorderGlow';
 import SlingButton from '@/components/react-bits/SlingButton';
 import FlowingMenu from '@/components/react-bits/FlowingMenu';
 import { PortfolioExperiments } from '@/components/portfolio-experiments';
+import { PortfolioIdentity } from '@/components/portfolio-identity';
 import { Timeline } from '@/components/ui/timeline';
 import chalkSystems from '@/assets/chalk-systems.jpg';
 
@@ -99,20 +100,13 @@ export function Portfolio() {
     gsap.ticker.add(tick);
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      gsap.from('.hero-top, .hero-location', { opacity: 0, y: 8, duration: .7, stagger: .15, clearProps: 'all' });
-      gsap.from('.hero-line', { y: 40, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', clearProps: 'all' });
-      gsap.from('.hero-visual', { opacity: 0, duration: 1.8, delay: .5, clearProps: 'all' });
+      gsap.from('.identity-top', { opacity: 0, y: 8, duration: .7, clearProps: 'all' });
+      gsap.from('.identity-name-line', { y: 35, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', clearProps: 'all' });
+      gsap.from('.identity-intro', { y: 12, opacity: 0, duration: .8, delay: .35, clearProps: 'all' });
       mm.add('(min-width: 768px)', () => {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom 25%', scrub: .7 } });
-        tl.to('.hero-line', { y: -60, opacity: 0, stagger: .09, duration: 1 }, .1)
-          .to('.hero-visual', { x: 70, y: -25, opacity: .3, duration: 1 }, .1)
-          .set('.hero-final', { visibility: 'visible' }, .8)
-          .fromTo('.hero-final', { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 1 }, .8)
-          .to('.hero-note', { x: -40, y: 20, duration: 1 }, .5);
+        gsap.to('.identity-name', { y: -18, ease: 'none', scrollTrigger: { trigger: '.identity-shell', start: 'top top', end: 'bottom top', scrub: .7 } });
+        gsap.to('.identity-verbs', { y: -60, ease: 'steps(4)', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom bottom', scrub: .5 } });
         gsap.to('.craft-notebook', { scrollTrigger: { trigger: '.craft-notebook', start: 'top 30%', endTrigger: '.craft', end: 'bottom 65%', pin: true, pinSpacing: false } });
-      });
-      mm.add('(max-width: 767px)', () => {
-        gsap.to('.hero-visual', { y: -25, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
       });
       gsap.utils.toArray<HTMLElement>('.section-heading, .craft-notebook, .stage-story, .system-console').forEach(el => {
         gsap.from(el, { y: 28, opacity: 0, duration: .75, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 90%', once: true }, clearProps: 'all' });
@@ -164,21 +158,8 @@ export function Portfolio() {
     <div className="grain" aria-hidden="true" />
     {!reduced && <TargetCursor targetSelector=".cursor-target" hideDefaultCursor={false} spinDuration={5} parallaxOn={false} cursorColor="var(--foreground)" cursorColorOnTarget="var(--primary)" />}
     <main>
-      <section id="home" className="hero page-margin">
-        <div className="hero-top">
-          <div className="personal-mark"><span className="mark-symbol">[·]</span><span className="mono-label">CREATIVE ENGINEER<br/><span className="text-muted-foreground">AN INDEPENDENT MIND.</span></span></div>
-          <div className="availability mono-label"><i className="status-dot"/>OPEN TO GOOD CONVERSATIONS</div>
-        </div>
-        <div className="hero-main">
-          <div className="hero-location"><span className="mono-label">NEW DELHI / INDIA ↗</span><span className="mono-label">DESIGN × CODE × SYSTEMS</span></div>
-          <h1 className="hero-headline"><span className="hero-line cursor-target">I DESIGN THINGS<span className="period">.</span></span><span className="hero-line cursor-target outline-word">I BUILD THINGS.</span><span className="hero-line cursor-target">I CONNECT THINGS<span className="period">.</span></span><span className="hero-line cursor-target last-line">I SHIP THINGS.</span></h1>
-          <div className="hero-final" aria-hidden="true">I MAKE<br/>IDEAS <em>REAL.</em></div>
-          <div className="hero-visual" aria-hidden="true"><div className="hand-note sketch-note">a little design.<br/>a lot of possibility.</div><img src={chalkSystems} width={1024} height={1024} alt=""/><div className="hero-code">const idea = imagine();<br/>const product = <span>build(idea);</span><br/>ship(product); // repeat.</div></div>
-          <div className="hero-note hand-note">↳ from the first scribble to the final deploy.</div>
-        </div>
-        <div className="hero-bottom"><div><p className="hero-description">A creative full-stack product engineer.<br/>Turning messy ideas into thoughtful, working things.</p><Magnet disabled={reduced} padding={25} magnetStrength={5}><Button variant="ghost" className="hero-scroll cursor-target p-0 h-auto" onClick={() => navigate(1)}><span className="scroll-ring"><ArrowDown size={15}/></span><span className="mono-label">SCROLL TO FOLLOW THE THREAD</span></Button></Magnet></div><div className="hero-edition mono-label">NOT A RESUME.<br/>A WORKING MIND.<br/><span className="text-primary">EST. IN CURIOSITY — ALWAYS IN PROGRESS</span></div></div>
-        <div className="metro" aria-label="From idea to deployment">{stations.map((s,i) => <span key={s} className={`metro-station ${i <= activeSection ? 'is-passed' : ''}`}>{s}</span>)}</div>
-      </section>
+      <PortfolioIdentity onFollow={() => navigate(1)}/>
+      <div className="narrative-metro page-margin"><div className="metro" aria-label="From idea to deployment">{stations.map((s,i) => <span key={s} className={`metro-station ${i <= activeSection ? 'is-passed' : ''}`}>{s}</span>)}</div></div>
 
       <section id="story" className="section story page-margin">
         <Kicker number="01">THE STORY</Kicker>
@@ -189,7 +170,7 @@ export function Portfolio() {
       <section id="craft" className="section craft page-margin">
         <Kicker number="02">THE CRAFT</Kicker>
         <div className="section-heading"><h2 className="display-title">GOOD DESIGN.<br/>REAL ENGINEERING.</h2><p className="section-intro">I don’t see two different disciplines.<br/>I see two halves of the same idea.</p></div>
-        <div className="craft-layout"><div className="craft-notebook"><div className="craft-side"><h3>FEEL.</h3><p>HIERARCHY<br/>INTERACTION<br/>THE HUMAN BIT</p></div><span className="craft-intersection">×</span><div className="craft-side"><h3>FUNCTION.</h3><p>LOGIC<br/>ARCHITECTURE<br/>THE WORKING BIT</p></div><div className="craft-sketch hand-note">the sweet spot ↗</div></div><div className="craft-flow"><FlowingMenu items={[{link:'#work',text:'Interfaces with intention',image:chalkSystems},{link:'#experiments',text:'Interactions with personality',image:chalkSystems},{link:'#systems',text:'Systems with a backbone',image:chalkSystems},{link:'#contact',text:'Ideas into real things',image:chalkSystems}]} onSelect={index => navigate([3,5,4,6][index] ?? 2)} textColor="var(--ink)" bgColor="transparent" marqueeBgColor="var(--ink)" marqueeTextColor="var(--chalk)" borderColor="var(--border)" reduced={reduced}/></div></div>
+        <div className="craft-layout"><div className="craft-notebook"><div className="craft-side"><h3>FEEL.</h3><p>HIERARCHY<br/>INTERACTION<br/>THE HUMAN BIT</p></div><span className="craft-intersection">×</span><div className="craft-side"><h3>FUNCTION.</h3><p>LOGIC<br/>ARCHITECTURE<br/>THE WORKING BIT</p></div><div className="craft-sketch hand-note">the sweet spot ↗</div></div><div className="craft-flow"><FlowingMenu items={[{link:'#work',text:'Interfaces with intention',image:chalkSystems},{link:'#experiments',text:'Interactions with personality',image:chalkSystems},{link:'#systems',text:'Systems with a backbone',image:chalkSystems},{link:'#contact',text:'Ideas into real things',image:chalkSystems}]} onSelect={index => navigate([3,5,4,6][index] ?? 2)} textColor="var(--chalk)" bgColor="transparent" marqueeBgColor="var(--chalk)" marqueeTextColor="var(--ink)" borderColor="var(--border)" reduced={reduced}/></div></div>
       </section>
 
       <section id="work" className="section work page-margin">
@@ -203,7 +184,7 @@ export function Portfolio() {
 
       <section id="contact" className="section contact page-margin"><Kicker number="06">THE NEXT CHAPTER</Kicker><div className="contact-header"><h2 className="contact-title">WHAT ARE<br/>WE <span>BUILDING?</span></h2><span className="contact-note hand-note">A good idea usually<br/>starts with a conversation. ↙</span></div><form className="contact-form" ref={formRef} onSubmit={composeMessage} onChange={() => setMessageReady(false)}><div className="form-field"><label htmlFor="name">01 / YOUR NAME</label><input id="name" name="name" placeholder="Who’s on the other side?" autoComplete="name" required maxLength={100}/></div><div className="form-field"><label htmlFor="email">02 / YOUR EMAIL</label><input id="email" name="email" type="email" placeholder="Somewhere I can say hello." autoComplete="email" required maxLength={254}/></div><div className="form-field full"><label htmlFor="message">03 / THE IDEA</label><textarea id="message" name="message" placeholder="The messy version is welcome." rows={2} required maxLength={5000}/></div><div className="form-actions"><div className="sling-composer"><SlingButton ariaLabel="Save your hello" onSend={() => formRef.current?.requestSubmit()} size={54} armAt={35} maxPull={85} flight={70} particles={8} className="cursor-target" padColor="var(--primary)" iconColor="var(--ink)" accentColor="var(--signal)" wellColor="var(--secondary)" bandColor="var(--border)">{messageReady ? <Check/> : <Download/>}</SlingButton><span className="mono-label">{messageReady ? 'MESSAGE SAVED' : 'SAVE YOUR HELLO'}</span></div><span className="form-notice" role="status">{messageReady ? 'Your message draft has downloaded. Nothing has been sent.' : 'Saves a message draft. Direct delivery is not connected yet.'}</span></div></form></section>
     </main>
-    <footer className="footer page-margin"><div className="mono-label">MADE WITH INTENTION.<br/>BUILT IN NEW DELHI, INDIA.</div><div className="footer-fuel mono-label"><Coffee/><span>FUEL: CHAI + CODE</span></div><span className="mono-label">ALWAYS A WORK IN PROGRESS. ↗</span></footer>
+    <footer className="footer page-margin"><div className="mono-label">ANIKET SHARMA.<br/>BUILT IN NEW DELHI, INDIA.</div><div className="footer-fuel mono-label"><Coffee/><span>FUEL: CHAI + CODE</span></div><span className="mono-label">ALWAYS A WORK IN PROGRESS. ↗</span></footer>
     <span className="wheel-caption mono-label">{String(activeSection+1).padStart(2,'0')} / EXPLORE</span>
     <Dialog.Root open={wheelOpen} onOpenChange={setWheelOpen}><Dialog.Trigger asChild><Button variant="chalk" className="wheel-trigger cursor-target" aria-label="Open navigation wheel" title="Explore the notebook"><Compass/></Button></Dialog.Trigger><Dialog.Portal><Dialog.Content className="wheel-panel" data-lenis-prevent><Dialog.Title className="mono-label text-muted-foreground">EVERYTHING IS CONNECTED.</Dialog.Title><Dialog.Description className="sr-only">Select a chapter with the wheel, then choose Go to chapter.</Dialog.Description><div className="wheel-object"><OptionWheel items={sections} defaultSelected={selected} fontSize={2.3} spacing={1.4} inset={40} tilt={13} curve={1.5} blur={0} fade={.21} minOpacity={.12} onChange={i => setSelected(i)} textColor="var(--muted-foreground)" activeColor="var(--foreground)"/></div><div className="wheel-panel-foot"><Button variant="ghost" size="sm" onClick={() => setWheelOpen(false)} aria-label="Close navigation"><X/></Button><Button variant="ghost" size="sm" className="mono-label cursor-target" onClick={() => navigate(selected)}>GO TO {sections[selected]} <ArrowRight/></Button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
     <Dialog.Root open={project !== null} onOpenChange={open => { if (!open) setProject(null); }}><Dialog.Portal><Dialog.Overlay className="case-overlay"/><Dialog.Content className="case-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[111] max-w-[calc(100vw-24px)]" data-lenis-prevent>{currentProject && <><div className="case-header"><div><span className="mono-label text-primary">CONCEPT STUDY / THE WHOLE PICTURE</span><Dialog.Title>{currentProject.name}</Dialog.Title><Dialog.Description className="mono-label text-muted-foreground">{currentProject.type} · ILLUSTRATIVE CONCEPT</Dialog.Description></div><Dialog.Close asChild><Button variant="ghost" size="icon" aria-label="Close concept study"><X/></Button></Dialog.Close></div><div className="case-tabs" role="tablist" aria-label="Concept study stages">{projectSteps.map((s,i) => <Button key={s} variant={step === i ? 'signal' : 'ghost'} size="sm" className="mono-label" role="tab" aria-selected={step === i} aria-controls="case-panel" id={`case-tab-${i}`} onClick={() => setStep(i)}>{s}</Button>)}</div><div className="case-content" ref={modalContent} id="case-panel" role="tabpanel" aria-labelledby={`case-tab-${step}`}><h3>{projectSteps[step]}<span className="text-primary">.</span></h3><p>{currentProject.steps[step]}</p></div><div className="case-footer"><span className="mono-label text-muted-foreground">0{step+1} / 06</span><Button variant="chalk" size="sm" onClick={() => setStep((step+1)%6)}>{step === 5 ? 'BACK TO THE BEGINNING' : 'NEXT CHAPTER'}<ArrowRight/></Button></div></>}</Dialog.Content></Dialog.Portal></Dialog.Root>

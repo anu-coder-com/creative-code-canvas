@@ -3,7 +3,7 @@ export function resolveTokenColor(color: string, host: HTMLElement): string {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = 1;
   const context = canvas.getContext('2d');
-  if (!context) return '#ffffff';
+  if (!context) return getComputedStyle(host).getPropertyValue('--foreground').trim();
   const probe = document.createElement('span');
   probe.style.color = color;
   host.appendChild(probe);
