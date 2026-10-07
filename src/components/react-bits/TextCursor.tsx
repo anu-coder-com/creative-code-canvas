@@ -1,12 +1,13 @@
 // Adapted from DavidHDev/react-bits (MIT): https://github.com/DavidHDev/react-bits
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef, type ReactNode } from 'react';
+import { gsap } from 'gsap';
 import './TextCursor.css';
 
 interface TextCursorProps {
   text: string;
+  children?: ReactNode;
   spacing?: number;
   followMouseDirection?: boolean;
   randomFloat?: boolean;
@@ -26,6 +27,7 @@ interface TrailItem {
 }
 
 const TextCursor: React.FC<TextCursorProps> = ({
+  children,
   text = '⚛️',
   spacing = 100,
   followMouseDirection = true,
@@ -108,7 +110,7 @@ const TextCursor: React.FC<TextCursorProps> = ({
 
     container.addEventListener('mousemove', handleMouseMove);
     return () => container.removeEventListener('mousemove', handleMouseMove);
-  }, [containerRef.current]);
+  }, [spacing, followMouseDirection, randomFloat, maxPoints]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -121,39 +123,27 @@ const TextCursor: React.FC<TextCursorProps> = ({
 
   return (
     <div ref={containerRef} className="text-cursor-container">
-      <div className="text-cursor-inner">
-        <AnimatePresence>
-          {trail.map(item => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 1, rotate: item.angle }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                x: randomFloat ? [0, item.randomX || 0, 0] : 0,
-                y: randomFloat ? [0, item.randomY || 0, 0] : 0,
-                rotate: randomFloat ? [item.angle, item.angle + (item.randomRotate || 0), item.angle] : item.angle
-              }}
-              exit={{ opacity: 0, scale: 0 }}
-              transition={{
-                opacity: { duration: exitDuration, ease: 'easeOut' },
-                ...(randomFloat && {
-                  x: { duration: 2, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' },
-                  y: { duration: 2, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' },
-                  rotate: { duration: 2, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }
-                })
-              }}
-              className="text-cursor-item"
-              style={{ left: item.x, top: item.y }}
-            >
-              {text}
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      {children}
+      <div className="text-cursor-inner" aria-hidden="true">
+        {trail.map(item => <TrailGlyph key={item.id} item={item} text={text} exitDuration={exitDuration} randomFloat={randomFloat} />)}
       </div>
     </div>
   );
 };
 
+function TrailGlyph({ item, text, exitDuration, randomFloat }: { item: TrailItem; text: string; exitDuration: number; randomFloat: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      gsap.set(el, { rotation: item.angle });
+      gsap.fromTo(el, { opacity: 1, scale: 1 }, { opacity: 0, scale: .5, duration: exitDuration + .2, delay: .1 });
+      if (randomFloat) gsap.to(el, { x: item.randomX ?? 0, y: item.randomY ?? 0, rotation: item.angle + (item.randomRotate ?? 0), duration: .6, ease: 'sine.inOut' });
+    });
+    return () => ctx.revert();
+  }, [item, randomFloat, exitDuration]);
+  return <div ref={ref} className="text-cursor-item" style={{ left: item.x, top: item.y }}>{text}</div>;
+}
 export default TextCursor;
 
