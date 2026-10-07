@@ -240,3 +240,8 @@
   .hero-scroll { margin-top: 17px; }
 }
 @media(max-width:380px) { .hero-headline { font-size: 41px; }.hero-location { gap: 8px; } }
+@media(max-width:767px) {
+  .hero-visual .sketch-note { display: none; }
+  .hero-note { font-size: 19px; max-width: 270px; }
+  .wheel-caption { bottom: 92px; }
+}
