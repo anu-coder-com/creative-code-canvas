@@ -1,0 +1,2 @@
+.text-block { max-width: 100%; font-family: var(--font-display); color: var(--signal); }
+.char { will-change: transform; display: inline-block; }
