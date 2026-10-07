@@ -19,18 +19,12 @@ interface BorderGlowProps {
   fillOpacity?: number;
 }
 
-function parseHSL(hslStr: string): { h: number; s: number; l: number } {
-  const match = hslStr.match(/([\d.]+)\s*([\d.]+)%?\s*([\d.]+)%?/);
-  if (!match) return { h: 40, s: 80, l: 80 };
-  return { h: parseFloat(match[1]), s: parseFloat(match[2]), l: parseFloat(match[3]) };
-}
-
 function buildGlowVars(glowColor: string, intensity: number): Record<string, string> {
   const opacities = [100, 60, 50, 40, 30, 20, 10];
   const keys = ['', '-60', '-50', '-40', '-30', '-20', '-10'];
   const vars: Record<string, string> = {};
   for (let i = 0; i < opacities.length; i++) {
-    vars[`--glow-color${keys[i]}`] = `color-mix(in srgb, ${glowColor} ${Math.min(opacities[i] * intensity, 100)}%, transparent)`;
+    vars[`--glow-color${keys[i]}`] = `color-mix(in srgb, ${glowColor} ${Math.min((opacities[i] ?? 0) * intensity, 100)}%, transparent)`;
   }
   return vars;
 }
@@ -42,8 +36,8 @@ const COLOR_MAP = [0, 1, 2, 0, 1, 2, 1];
 function buildGradientVars(colors: string[]): Record<string, string> {
   const vars: Record<string, string> = {};
   for (let i = 0; i < 7; i++) {
-    const c = colors[Math.min(COLOR_MAP[i], colors.length - 1)];
-    vars[GRADIENT_KEYS[i]] = `radial-gradient(at ${GRADIENT_POSITIONS[i]}, ${c} 0px, transparent 50%)`;
+    const c = colors[Math.min(COLOR_MAP[i] ?? 0, colors.length - 1)];
+    vars[GRADIENT_KEYS[i] ?? "--gradient-one"] = `radial-gradient(at ${GRADIENT_POSITIONS[i]}, ${c} 0px, transparent 50%)`;
   }
   vars['--gradient-base'] = `linear-gradient(${colors[0]} 0 100%)`;
   return vars;
@@ -97,7 +91,7 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
 
   const getCenterOfElement = useCallback((el: HTMLElement) => {
     const { width, height } = el.getBoundingClientRect();
-    return [width / 2, height / 2];
+    return [width / 2, height / 2] as const;
   }, []);
 
   const getEdgeProximity = useCallback((el: HTMLElement, x: number, y: number) => {

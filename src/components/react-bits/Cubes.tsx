@@ -75,8 +75,8 @@ const Cubes: React.FC<CubesProps> = ({
     (rowCenter: number, colCenter: number) => {
       if (!sceneRef.current) return;
       sceneRef.current.querySelectorAll<HTMLDivElement>('.cube').forEach(cube => {
-        const r = Number(cube.dataset.row ?? 0);
-        const c = Number(cube.dataset.col ?? 0);
+        const r = Number(cube.dataset['row'] ?? 0);
+        const c = Number(cube.dataset['col'] ?? 0);
         const dist = Math.hypot(r - rowCenter, c - colCenter);
         if (dist <= radius) {
           const pct = 1 - dist / radius;
@@ -180,8 +180,8 @@ const Cubes: React.FC<CubesProps> = ({
       const cellW = rect.width / gridSize;
       const cellH = rect.height / gridSize;
 
-      const clientX = (e as MouseEvent).clientX || ((e as TouchEvent).touches && (e as TouchEvent).touches[0].clientX);
-      const clientY = (e as MouseEvent).clientY || ((e as TouchEvent).touches && (e as TouchEvent).touches[0].clientY);
+      const clientX = (e as MouseEvent).clientX || ((e as TouchEvent).touches?.[0]?.clientX ?? 0);
+      const clientY = (e as MouseEvent).clientY || ((e as TouchEvent).touches?.[0]?.clientY ?? 0);
 
       const colHit = Math.floor((clientX - rect.left) / cellW);
       const rowHit = Math.floor((clientY - rect.top) / cellH);
@@ -196,8 +196,8 @@ const Cubes: React.FC<CubesProps> = ({
 
       const rings: Record<number, HTMLDivElement[]> = {};
       sceneRef.current.querySelectorAll<HTMLDivElement>('.cube').forEach(cube => {
-        const r = Number(cube.dataset.row ?? 0);
-        const c = Number(cube.dataset.col ?? 0);
+        const r = Number(cube.dataset['row'] ?? 0);
+        const c = Number(cube.dataset['col'] ?? 0);
         const dist = Math.hypot(r - rowHit, c - colHit);
         const ring = Math.round(dist);
         if (!rings[ring]) rings[ring] = [];
@@ -209,7 +209,7 @@ const Cubes: React.FC<CubesProps> = ({
         .sort((a, b) => a - b)
         .forEach(ring => {
           const delay = ring * spreadDelay;
-          const faces = rings[ring].flatMap(cube => Array.from(cube.querySelectorAll<HTMLElement>('.cube-face')));
+          const faces = (rings[ring] ?? []).flatMap(cube => Array.from(cube.querySelectorAll<HTMLElement>('.cube-face')));
 
           gsap.to(faces, {
             backgroundColor: rippleColor,

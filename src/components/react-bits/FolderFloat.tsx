@@ -181,7 +181,7 @@ const FolderFloat: React.FC<FolderFloatProps> = ({
       if (next.some(s => !s)) return;
       const sized = next as Size[];
       setSizes(prev =>
-        prev.length === sized.length && prev.every((s, i) => s.w === sized[i].w && s.h === sized[i].h) ? prev : sized
+        prev.length === sized.length && prev.every((s, i) => s.w === sized[i]?.w && s.h === sized[i]?.h) ? prev : sized
       );
     };
     measure();
@@ -199,7 +199,7 @@ const FolderFloat: React.FC<FolderFloatProps> = ({
         const el = pillRefs.current[i];
         if (!el) return;
         el.style.setProperty('--x', `${b.position.x.toFixed(1)}px`);
-        el.style.setProperty('--y', `${(b.position.y - w.sizes[i].h / 2).toFixed(1)}px`);
+        el.style.setProperty('--y', `${(b.position.y - (w.sizes[i]?.h ?? 0) / 2).toFixed(1)}px`);
       });
       Composite.clear(w.engine.world, false, true);
       Engine.clear(w.engine);
@@ -229,8 +229,8 @@ const FolderFloat: React.FC<FolderFloatProps> = ({
     };
     w.zone = zone;
     w.bodies = els.map((el, i) => {
-      const { w: bw, h: bh } = w.sizes[i];
-      const b = Bodies.rectangle(pos[i].x, pos[i].y + bh / 2, bw, bh, {
+      const { w: bw, h: bh } = w.sizes[i] ?? { w: 0, h: 0 };
+      const b = Bodies.rectangle((pos[i]?.x ?? 0), (pos[i]?.y ?? 0) + bh / 2, bw, bh, {
         chamfer: { radius: Math.min(bh / 2 - 1, 16) },
         restitution: 0.55,
         friction: 0,
@@ -280,7 +280,7 @@ const FolderFloat: React.FC<FolderFloatProps> = ({
         const el = pillRefs.current[i];
         if (!el) return;
         el.style.setProperty('--x', `${b.position.x.toFixed(1)}px`);
-        el.style.setProperty('--y', `${(b.position.y - s.sizes[i].h / 2).toFixed(1)}px`);
+        el.style.setProperty('--y', `${(b.position.y - (s.sizes[i]?.h ?? 0) / 2).toFixed(1)}px`);
       });
       s.raf = requestAnimationFrame(tick);
     };
@@ -370,7 +370,8 @@ const FolderFloat: React.FC<FolderFloatProps> = ({
     }
     if (!d.moved) return;
     const b = w.bodies[i];
-    const { w: bw, h: bh } = w.sizes[i];
+    if (!b || !w.zone) return;
+    const { w: bw, h: bh } = w.sizes[i] ?? { w: 0, h: 0 };
     const z = w.zone as Zone;
     const p = pointerAt(e);
     const x = Math.min(z.right - bw / 2, Math.max(z.left + bw / 2, p.x + d.dx));
@@ -439,6 +440,7 @@ const FolderFloat: React.FC<FolderFloatProps> = ({
       <div ref={anchorRef} className="folder-float__items">
         {list.map((item, i) => {
           const p = pos[i];
+          if (!p) return null;
           return (
             <Button variant="ghost"
               key={`${item.value}-${i}`}

@@ -301,7 +301,7 @@ const SlingButton: React.FC<SlingButtonProps> = ({
     py.set(d * uy);
     const t = performance.now();
     g.hist.push({ x: d * ux, y: d * uy, t });
-    while (g.hist.length > 4 || t - g.hist[0].t > 80) g.hist.shift();
+    while (g.hist.length > 4 || t - (g.hist[0]?.t ?? t) > 80) g.hist.shift();
     const isArmed = d >= ARM;
     if (isArmed !== armedRef.current) {
       armedRef.current = isArmed;
@@ -324,8 +324,8 @@ const SlingButton: React.FC<SlingButtonProps> = ({
     if (!cancelled && g.hist.length > 1) {
       const a = g.hist[0];
       const b = g.hist[g.hist.length - 1];
-      const dt = b.t - a.t;
-      if (dt > 0 && performance.now() - b.t < 50) {
+      const dt = a && b ? b.t - a.t : 0;
+      if (a && b && dt > 0 && performance.now() - b.t < 50) {
         vx = ((b.x - a.x) / dt) * 1000;
         vy = ((b.y - a.y) / dt) * 1000;
       }

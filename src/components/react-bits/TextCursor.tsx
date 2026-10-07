@@ -69,6 +69,7 @@ const TextCursor: React.FC<TextCursorProps> = ({
         });
       } else {
         const last = newTrail[newTrail.length - 1];
+        if (!last) return newTrail;
         const dx = mouseX - last.x;
         const dy = mouseY - last.y;
         const distance = Math.sqrt(dx * dx + dy * dy);

@@ -155,7 +155,7 @@ const SpecularButton = ({
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     const geometry = new Triangle(gl);
-    if (geometry.attributes.uv) delete geometry.attributes.uv;
+    if (geometry.attributes['uv']) delete geometry.attributes['uv'];
 
     const program = new Program(gl, {
       vertex: VERT,
@@ -190,8 +190,8 @@ const SpecularButton = ({
       sizeRef.w = w;
       sizeRef.h = h;
       renderer.setSize(w + PAD * 2, h + PAD * 2);
-      program.uniforms.uCenter.value = [(PAD + w / 2) * dpr, (PAD + h / 2) * dpr];
-      program.uniforms.uHalfSize.value = [(w / 2) * dpr, (h / 2) * dpr];
+      program.uniforms['uCenter'].value = [(PAD + w / 2) * dpr, (PAD + h / 2) * dpr];
+      program.uniforms['uHalfSize'].value = [(w / 2) * dpr, (h / 2) * dpr];
     };
     const ro = new ResizeObserver(resize);
     ro.observe(btn);
@@ -251,14 +251,14 @@ const SpecularButton = ({
 
       lineC.set(resolveTokenColor(p.lineColor, btn));
       baseC.set(resolveTokenColor(p.baseColor, btn));
-      program.uniforms.uAngle.value = angle;
-      program.uniforms.uRadius.value = Math.min(p.radius, Math.min(sizeRef.w, sizeRef.h) / 2) * dpr;
-      program.uniforms.uLineColor.value = [lineC.r, lineC.g, lineC.b];
-      program.uniforms.uBaseColor.value = [baseC.r, baseC.g, baseC.b];
-      program.uniforms.uIntensity.value = p.intensity * bright;
-      program.uniforms.uShineSize.value = (p.shineSize * Math.PI) / 180;
-      program.uniforms.uShineFade.value = (p.shineFade * Math.PI) / 180;
-      program.uniforms.uThickness.value = p.thickness * dpr;
+      program.uniforms['uAngle'].value = angle;
+      program.uniforms['uRadius'].value = Math.min(p.radius, Math.min(sizeRef.w, sizeRef.h) / 2) * dpr;
+      program.uniforms['uLineColor'].value = [lineC.r, lineC.g, lineC.b];
+      program.uniforms['uBaseColor'].value = [baseC.r, baseC.g, baseC.b];
+      program.uniforms['uIntensity'].value = p.intensity * bright;
+      program.uniforms['uShineSize'].value = (p.shineSize * Math.PI) / 180;
+      program.uniforms['uShineFade'].value = (p.shineFade * Math.PI) / 180;
+      program.uniforms['uThickness'].value = p.thickness * dpr;
       renderer.render({ scene: mesh });
     };
     raf = requestAnimationFrame(update);
