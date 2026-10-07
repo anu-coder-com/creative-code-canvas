@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Portfolio architecture
+- Keep the framed identity opening in its own presentational component; the portfolio owns navigation and GSAP so the name stays visible through storytelling.
 - Keep the portfolio as one explicitly scroll-driven narrative at `/`; section anchors belong to the continuous GSAP storytelling experience.
 - Vendor attributed React Bits components in `src/components/react-bits` and customize semantic styling while preserving their interaction logic.
 - Adapt Motion-dependent React Bits micro interactions through the GSAP motion-value bridge and TextCursor through GSAP; keep the original geometry, pointer rules, and accessible actions without expanding Motion beyond Timeline.
