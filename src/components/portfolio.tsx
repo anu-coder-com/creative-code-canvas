@@ -9,7 +9,8 @@ import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import OptionWheel from '@/components/react-bits/OptionWheel';
 import TargetCursor from '@/components/react-bits/TargetCursor';
-import TextCursor from '@/components/react-bits/TextCursor';
+import { PortfolioIdentity } from './portfolio-identity';
+import { usePortfolioMotion } from './portfolio-motion';
 import Magnet from '@/components/react-bits/Magnet';
 import SpecularButton from '@/components/react-bits/SpecularButton';
 import BorderGlow from '@/components/react-bits/BorderGlow';
@@ -21,12 +22,12 @@ import FolderFloat from '@/components/react-bits/FolderFloat';
 import { PortfolioExperiments } from '@/components/portfolio-experiments';
 import { Timeline } from '@/components/ui/timeline';
 import chalkSystems from '@/assets/chalk-systems.jpg';
-import { navItems, navIds, heroWords, heroNotes, metroStations, capabilities, caseStages, projects, hoodNodes, projectTypes } from '@/components/portfolio-content';
+import { navItems, navIds, heroWords, metroStations, capabilities, caseStages, projects, hoodNodes, projectTypes } from '@/components/portfolio-content';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(true);
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReduced(media.matches);
@@ -42,6 +43,7 @@ export function Portfolio() {
   const root = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
   const reduced = useReducedMotion();
+  usePortfolioMotion(root, reduced);
   const [wheelOpen, setWheelOpen] = useState(false);
   const [selected, setSelected] = useState(0);
   const [active, setActive] = useState(0);
@@ -76,22 +78,9 @@ export function Portfolio() {
     gsap.ticker.add(tick); gsap.ticker.lagSmoothing(0);
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      // Hero: starts almost empty, then a short film driven by scroll.
-      const intro = gsap.timeline();
-      intro.from('.film-loc', { opacity: 0, y: 6, duration: .8, delay: .3 })
-        .from('.film-note', { opacity: 0, scale: .6, rotate: -8, stagger: .25, duration: .5, ease: 'back.out(2)' })
-        .from('.film-make .char-line', { yPercent: 110, duration: 1, ease: 'expo.out' }, '-=.2')
-        .from('.film-hint', { opacity: 0, duration: .6 });
-      const film = gsap.timeline({ scrollTrigger: { trigger: '.film', start: 'top top', end: 'bottom bottom', scrub: .8 } });
-      film.to('.film-make', { scale: .6, opacity: 0, filter: 'blur(6px)', duration: 1 })
-        .to('.film-note', { opacity: 0, x: (i: number) => (i % 2 ? 80 : -80), duration: 1 }, '<')
-        .to('.film-hint', { opacity: 0, duration: .3 }, '<');
-      gsap.utils.toArray<HTMLElement>('.film-word').forEach(w => {
-        film.fromTo(w, { clipPath: 'inset(0 100% 0 0)', opacity: 1 }, { clipPath: 'inset(0 0% 0 0)', duration: 1, ease: 'power2.inOut' })
-          .to(w, { yPercent: -40, opacity: 0, skewX: -8, duration: .8 }, '+=.4');
+      gsap.utils.toArray<HTMLElement>('.practice-word').forEach((el, i) => {
+        gsap.from(el, { x: i % 2 ? 55 : -55, opacity: .15, ease: 'none', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 45%', scrub: .6 } });
       });
-      film.fromTo('.film-final', { opacity: 0, scale: 1.25, letterSpacing: '.3em' }, { opacity: 1, scale: 1, letterSpacing: '0em', duration: 1.2 })
-        .to('.film-sketch path', { strokeDashoffset: 0, duration: 1 }, '<');
       // Metro map draws itself.
       gsap.utils.toArray<SVGPathElement>('.metro-map .line').forEach(p => {
         const len = p.getTotalLength(); gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
@@ -144,33 +133,18 @@ export function Portfolio() {
   return <TooltipProvider delayDuration={120}><div ref={root} className="portfolio">
     <div className="grain" aria-hidden="true"/>
     {!reduced && <TargetCursor targetSelector=".cursor-target" hideDefaultCursor={false} spinDuration={5} parallaxOn={false} cursorColor="var(--foreground)" cursorColorOnTarget="var(--signal)"/>}
-    <nav className="rail" aria-label="Story progress"><span className="rail-fill" aria-hidden="true"/>{navItems.map((n, i) => <button key={n} className={`rail-stop cursor-target ${i <= active ? 'is-passed' : ''} ${i === active ? 'is-here' : ''}`} onClick={() => navigate(i)} aria-label={`Go to ${n}`}><span>{n}</span></button>)}</nav>
+    <nav className="rail" aria-label="Story progress"><span className="rail-fill" aria-hidden="true"/>{navItems.map((n, i) => <Button variant="ghost" key={n} className={`rail-stop cursor-target ${i <= active ? 'is-passed' : ''} ${i === active ? 'is-here' : ''}`} onClick={() => navigate(i)} aria-label={`Go to ${n}`}><span>{n}</span></Button>)}</nav>
 
     <main>
-      {/* 01 — WHO AM I? */}
-      <section id="me" className={`film ${reduced ? 'is-static' : ''}`}>
-        <div className="film-stage">
-          <div className="film-grid" aria-hidden="true"/>
-          <span className="film-loc mono-label">NEW DELHI / INDIA · 28.61°N 77.20°E</span>
-          {heroNotes.map((n, i) => <span key={n} className={`film-note hand-note note-${i}`}>{n}</span>)}
-          {reduced ? <div className="film-type">
-            <h1 className="film-make">I MAKE THINGS.</h1>{heroWords.map(w => <p className="film-word" key={w}>{w}</p>)}<p className="film-final">THAT’S BASICALLY ME.</p>
-          </div> : <TextCursor text="✦" spacing={70} maxPoints={6} exitDuration={.5} followMouseDirection={false}><div className="film-type">
-            <h1 className="film-make cursor-target"><span className="mask"><span className="char-line">I MAKE THINGS.</span></span></h1>
-            {heroWords.map(w => <p className="film-word cursor-target" key={w}>{w}</p>)}
-            <p className="film-final cursor-target">THAT’S BASICALLY ME.<svg className="film-sketch" viewBox="0 0 600 40" aria-hidden="true"><path d="M5 30 C 150 10, 300 38, 595 14" pathLength={1} strokeDasharray="1" strokeDashoffset="1"/></svg></p>
-          </div></TextCursor>}
-          <span className="film-hint mono-label">SCROLL — THE FILM STARTS ↓</span>
-          <span className="film-sign mono-label">ANIKET SHARMA</span>
-        </div>
-      </section>
+      <PortfolioIdentity onFollow={() => navigate(1)}/>
+      <div className="practice-strip page-margin" aria-label="My practice">{heroWords.map((word, i) => <span className="practice-word" key={word}><span className="mono-label">0{i + 1}</span>{word}</span>)}</div>
 
       {/* 02 — STORY */}
       <section id="story" className="section page-margin">
         <span className="mono-label kicker">02 / THE ROUTE</span>
         <h2 className="display reveal"><span className="mask"><span className="char-line">MY BRAIN IS NOT</span></span><span className="mask"><span className="char-line">A STRAIGHT LINE.</span></span></h2>
         <p className="hand-note text-signal sub">Neither was the journey.</p>
-        <p className="lede">Like the Delhi Metro: multiple lines, unexpected interchanges, wrong stations, getting lost — and eventually reaching somewhere interesting.</p>
+        <p className="lede personal-intro">A creative full-stack engineer, connecting <span className="inline-preview"><Button variant="link" className="inline-word cursor-target" onClick={() => navigate(3)}>design</Button><span className="inline-preview-panel"><span className="preview-art preview-design" aria-hidden="true">Aa<span>↗</span></span><strong>Design with a point of view.</strong><small>Shape, hierarchy, and the little details.</small></span></span>, <span className="inline-preview"><Button variant="link" className="inline-word cursor-target" onClick={() => navigate(3)}>code</Button><span className="inline-preview-panel"><span className="preview-art preview-code" aria-hidden="true">{'{ idea: true }'}</span><strong>From thought to interaction.</strong><small>Frontend, backend, everything between.</small></span></span>, and <span className="inline-preview"><Button variant="link" className="inline-word cursor-target" onClick={() => document.getElementById('systems')?.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' })}>systems</Button><span className="inline-preview-panel"><span className="preview-art preview-systems" aria-hidden="true">○ — □ — ○</span><strong>The invisible connections.</strong><small>APIs, data, and reliable workflows.</small></span></span>. A curious mind, with a Delhi address.</p>
         <svg className="metro-map" viewBox="0 0 1000 260" role="img" aria-label="A metro map of my journey from curiosity to whatever comes next">
           <path className="line main" d="M20 180 H260 L320 120 H600 L660 180 H980"/>
           <path className="line branch" d="M320 120 L380 50 H520"/>
@@ -186,7 +160,7 @@ export function Portfolio() {
         <span className="mono-label kicker">03 / THINGS I BUILD</span>
         <h2 className="display reveal"><span className="mask"><span className="char-line">SOME THINGS I BUILD</span></span><span className="mask"><span className="char-line">ARE SERIOUS.</span></span></h2>
         <h2 className="display reveal ghost"><span className="mask"><span className="char-line">SOME ARE NOT.</span></span></h2>
-        <p className="lede">Hover a tile. Each one shows what actually happens inside.</p>
+        <p className="lede">From a first sketch to the last webhook. Different disciplines, one connected practice.</p>
         <div className="cap-bento"><MagicBento cards={bentoCards} textAutoHide={false} disableAnimations={reduced} enableSpotlight={!reduced} enableStars={false} enableTilt={false} enableMagnetism={!reduced} clickEffect={!reduced} glowColor="var(--signal)" spotlightRadius={260}/></div>
       </section>
 
@@ -199,13 +173,13 @@ export function Portfolio() {
         </div>
         <div className="project-menu"><FlowingMenu items={projects.map((x, i) => ({ link: `#${x.id}`, text: `0${i + 1} — ${x.name} · ${x.kind}`, image: chalkSystems }))} onSelect={i => { setStage(0); setProject(i); }} textColor="var(--chalk)" bgColor="transparent" marqueeBgColor="var(--signal)" marqueeTextColor="var(--ink)" borderColor="var(--border)" reduced={reduced}/></div>
         <div className="page-margin plate-row">
-          {projects.map((x, i) => <BorderGlow key={x.id} className="plate" backgroundColor="var(--background)" glowColor="var(--signal)" colors={['var(--signal)', 'var(--metro)', 'var(--chalk)']} borderRadius={6} glowRadius={20} glowIntensity={.6} fillOpacity={.04}><button className="plate-btn cursor-target" onClick={() => { setStage(0); setProject(i); }}><span className="mono-label">0{i + 1} / {x.kind}</span><strong>{x.name}</strong><span className="hand-note text-signal">{x.status}</span></button></BorderGlow>)}
+          {projects.map((x, i) => <BorderGlow key={x.id} className="plate" backgroundColor="var(--background)" glowColor="var(--signal)" colors={['var(--foreground)', 'var(--muted)', 'var(--chalk)']} borderRadius={6} glowRadius={20} glowIntensity={.6} fillOpacity={.04}><Button variant="ghost" className="plate-btn cursor-target" onClick={() => { setStage(0); setProject(i); }}><span className="mono-label">0{i + 1} / {x.kind}</span><strong>{x.name}</strong><span className="hand-note text-signal">{x.status}</span></Button></BorderGlow>)}
         </div>
         <div className="page-margin leftovers"><FolderFloat trigger="hover" label="Leftovers" sublabel="small artifacts" items={['Chai timer', 'Metro rhythm', 'Cursor toys']} width={170} height={112} radius={6} spread={110} lift={44} physics={!reduced} folderColor="var(--surface)" frontColor="var(--signal)" paperColor="var(--chalk)" itemColor="var(--chalk)" itemTextColor="var(--ink)" labelColor="var(--ink)"/><span className="hand-note">needs more chutney →</span></div>
       </section>
 
       {/* 05 — UNDER THE HOOD */}
-      <section className="hood">
+      <section id="systems" className="hood">
         <div className="page-margin">
           <p className="hood-title-a display">THE PRETTY PART IS</p><p className="hood-title-b display ghost">ONLY HALF THE STORY.</p>
           <h2 className="display hood-h">UNDER THE HOOD.</h2>
@@ -213,7 +187,7 @@ export function Portfolio() {
             <div className={`hood-cubes ${reduced ? 'is-static' : ''}`}><Cubes gridSize={7} maxAngle={40} radius={3} autoAnimate={!reduced} rippleOnClick={!reduced} borderStyle="1px solid var(--muted-foreground)" faceColor="var(--background)" rippleColor="var(--signal)" cellGap={5}/></div>
             <div className="hood-system">
               <div className="hood-nodes">{hoodNodes.map((n, i) => <span key={n} className={`hood-node ${hood >= i ? 'is-hit' : ''}`}>{n}</span>)}</div>
-              <div className="hood-console mono-label" aria-live="polite">{hood < 0 ? '> idle. press the button, watch the request travel_' : hood === 99 ? '> 200 OK · deployed · nobody noticed (good)' : `> ${hoodNodes[hood]?.toLowerCase()} … ok`}</div>
+              <div className="hood-console mono-label" aria-live="polite">{hood < 0 ? '> request simulation · ready_' : hood === 99 ? '> 200 OK · deployed · nobody noticed (good)' : `> ${hoodNodes[hood]?.toLowerCase()} … ok`}</div>
               <Magnet disabled={reduced} padding={30} magnetStrength={5}><Button variant="chalk" className="cursor-target mono-label" onClick={traceRequest}>{hood === 99 ? <RotateCcw/> : <Play/>}{hood === 99 ? 'SEND ANOTHER' : 'TRACE A REQUEST'}</Button></Magnet>
             </div>
           </div>
@@ -242,8 +216,8 @@ export function Portfolio() {
         <h2 className="display reveal"><span className="mask"><span className="char-line">THE LITTLE THINGS</span></span><span className="mask"><span className="char-line">MATTER.</span></span></h2>
         <div className="detail-grid">
           <div className="detail"><span className="mono-label">TOGGLE</span><label className="detail-row"><Switch checked={chai} onCheckedChange={setChai} aria-label="Chai mode"/>{chai ? 'chai mode: on' : 'chai mode: off (why?)'}</label></div>
-          <div className="detail"><span className="mono-label">TOOLTIP</span><Tooltip><TooltipTrigger asChild><button className="detail-chip cursor-target">hover me</button></TooltipTrigger><TooltipContent>told you it was small.</TooltipContent></Tooltip></div>
-          <div className="detail"><span className="mono-label">LOADING</span><button className="detail-chip cursor-target" onClick={fakeLoad} aria-busy={loading}>{loading ? <span className="dots" aria-label="Loading"><i/><i/><i/></span> : 'load something'}</button></div>
+          <div className="detail"><span className="mono-label">TOOLTIP</span><Tooltip><TooltipTrigger asChild><Button variant="ghost" className="detail-chip cursor-target">a small surprise</Button></TooltipTrigger><TooltipContent>told you it was small.</TooltipContent></Tooltip></div>
+          <div className="detail"><span className="mono-label">LOADING</span><Button variant="ghost" className="detail-chip cursor-target" onClick={fakeLoad} aria-busy={loading}>{loading ? <span className="dots" aria-label="Loading"><i/><i/><i/></span> : 'a moment, please'}</Button></div>
           <div className="detail"><span className="mono-label">MAGNET</span><Magnet disabled={reduced} padding={50} magnetStrength={3}><span className="detail-chip">come closer</span></Magnet></div>
           <div className="detail"><span className="mono-label">SPECULAR</span><SpecularButton size="sm" radius={4} className="cursor-target mono-label" textColor="var(--chalk)" lineColor="var(--chalk)" baseColor="var(--border)" tint="var(--signal)" tintOpacity={.06} followMouse={!reduced}>catch the light</SpecularButton></div>
           <div className="detail"><span className="mono-label">HOVER</span><span className="detail-underline cursor-target">a line that knows you’re here</span></div>
@@ -253,7 +227,7 @@ export function Portfolio() {
       {/* 09 — CONTACT */}
       <section id="contact" className="section page-margin contact">
         <h2 className="display reveal"><span className="mask"><span className="char-line ghost">SO...</span></span><span className="mask"><span className="char-line">WHAT ARE WE BUILDING?</span></span></h2>
-        <div className="kind-row" role="radiogroup" aria-label="What kind of thing">{projectTypes.map(t => <button key={t} role="radio" aria-checked={kind === t} className={`kind cursor-target ${kind === t ? 'is-on' : ''}`} onClick={() => { setKind(t); setReady(false); }}>{t}</button>)}</div>
+        <div className="kind-row" role="radiogroup" aria-label="What kind of thing">{projectTypes.map(t => <Button variant="ghost" key={t} role="radio" aria-checked={kind === t} className={`kind cursor-target ${kind === t ? 'is-on' : ''}`} onClick={() => { setKind(t); setReady(false); }}>{t}</Button>)}</div>
         <form ref={formRef} className="contact-form" onSubmit={compose} onChange={() => setReady(false)}>
           <div className="form-field"><label htmlFor="name">YOUR NAME</label><input id="name" name="name" required maxLength={100} placeholder="who’s ordering?" autoComplete="name"/></div>
           <div className="form-field"><label htmlFor="email">YOUR EMAIL</label><input id="email" name="email" type="email" required maxLength={254} placeholder="where do I send the momos?" autoComplete="email"/></div>
@@ -279,8 +253,8 @@ export function Portfolio() {
     <Dialog.Root open={project !== null} onOpenChange={o => { if (!o) setProject(null); }}><Dialog.Portal><Dialog.Overlay className="case-overlay"/><Dialog.Content className="case-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[111] max-w-[calc(100vw-24px)]" data-lenis-prevent>{p && <>
       <div className="case-header"><div><span className="mono-label text-signal">{p.status}</span><Dialog.Title>{p.name}</Dialog.Title><Dialog.Description className="mono-label text-muted-foreground">{p.kind}</Dialog.Description></div><Dialog.Close asChild><Button variant="ghost" size="icon" aria-label="Close case study"><X/></Button></Dialog.Close></div>
       <Flow steps={p.flow} live={!reduced}/>
-      <div className="case-tabs" role="tablist">{caseStages.map((s, i) => <button key={s} role="tab" aria-selected={stage === i} className={`case-stop ${stage >= i ? 'is-passed' : ''}`} onClick={() => setStage(i)}><i/><span>{s}</span></button>)}</div>
-      <div className="case-content" key={stage}><h3>{caseStages[stage]}</h3><p>{p.stages[stage]}</p></div>
+      <div className="case-tabs" role="tablist">{caseStages.map((s, i) => <Button variant="ghost" key={s} role="tab" aria-selected={stage === i} className={`case-stop ${stage >= i ? 'is-passed' : ''}`} onClick={() => setStage(i)}><i/><span>{s}</span></Button>)}</div>
+      <div className={`case-content ${reduced ? 'is-static' : ''}`} key={stage}><h3>{caseStages[stage]}</h3><p>{p.stages[stage]}</p></div>
       <div className="case-footer"><span className="mono-label text-muted-foreground">STATION {stage + 1} / 7</span><Button variant="chalk" size="sm" onClick={() => setStage((stage + 1) % 7)}>{stage === 6 ? 'BACK TO START' : 'NEXT STATION'}<ArrowRight/></Button></div>
     </>}</Dialog.Content></Dialog.Portal></Dialog.Root>
   </div></TooltipProvider>;
