@@ -394,7 +394,7 @@
 .lede { max-width: 700px; font-size: 17px; line-height: 1.8; color: var(--muted-foreground); margin-top: 26px; }
 .personal-intro { font-size: 28px; line-height: 1.9; max-width: 880px; margin-top: 38px; }
 .inline-preview { display: inline; position: relative; }
-.inline-word { padding: 0; height: auto; display: inline; font: 600 inherit var(--font-sans); font-size: inherit; line-height: inherit; color: var(--foreground); text-decoration: none; border-bottom: 1px solid var(--muted); border-radius: 0; }
+.inline-word { padding: 0; height: auto; display: inline; font-family: var(--font-sans); font-weight: 600; font-size: inherit; line-height: inherit; color: var(--foreground); text-decoration: none; border-bottom: 1px solid var(--muted); border-radius: 0; }
 .inline-word:hover { text-decoration: none; }
 .inline-preview-panel { position: absolute; z-index: 75; left: -30px; top: 100%; width: 230px; padding: 9px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow-overlay); opacity: 0; pointer-events: none; display: block; font-size: 11px; line-height: 1.6; transform-origin: top center; }
 .inline-preview-panel strong, .inline-preview-panel small { display: block; margin: 8px 4px; }
