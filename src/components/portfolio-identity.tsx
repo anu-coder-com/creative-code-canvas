@@ -14,7 +14,7 @@ export function PortfolioIdentity({ onFollow }: { onFollow: () => void }) {
       title.style.fontSize = '';
       const base = Number.parseFloat(getComputedStyle(title).fontSize);
       const widest = Math.max(...Array.from(title.querySelectorAll<HTMLElement>('.name-line')).map(line => line.scrollWidth));
-      if (widest > title.clientWidth) title.style.fontSize = `${Math.floor(base * title.clientWidth / widest)}px`;
+      if (widest > title.clientWidth) title.style.fontSize = `${Math.floor(base * (title.clientWidth - 10) / widest)}px`;
     };
     const observer = new ResizeObserver(fit);
     if (title.parentElement) observer.observe(title.parentElement);

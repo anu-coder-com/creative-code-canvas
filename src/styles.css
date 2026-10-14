@@ -365,7 +365,7 @@
 .opening-eyebrow { margin-bottom: 20px; }
 .opening-heading h1 { font: 800 130px/.9 var(--font-display); }
 .name-mask { display: block; overflow: hidden; padding-bottom: 10px; }
-.name-line { display: inline-block; }
+.name-line { display: inline-block; white-space: nowrap; }
 .name-outline { -webkit-text-stroke: 1px var(--foreground); color: transparent; }
 .name-star { display: inline-block; -webkit-text-stroke: 0; color: var(--foreground); font: 400 60px var(--font-display); margin-left: 15px; vertical-align: top; }
 .opening-bottom { display: flex; align-items: end; justify-content: space-between; gap: 26px; }
