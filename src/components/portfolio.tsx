@@ -79,7 +79,7 @@ export function Portfolio() {
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>('.practice-word').forEach((el, i) => {
-        gsap.from(el, { x: i % 2 ? 55 : -55, opacity: .15, ease: 'none', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 45%', scrub: .6 } });
+        gsap.from(el, { y: i % 2 ? 12 : -12, opacity: .15, ease: 'none', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 45%', scrub: .6 } });
       });
       // Metro map draws itself.
       gsap.utils.toArray<SVGPathElement>('.metro-map .line').forEach(p => {
@@ -93,7 +93,7 @@ export function Portfolio() {
       mm.add('(min-width: 900px)', () => {
         gsap.to('.hood-title-a', { xPercent: -18, ease: 'none', scrollTrigger: { trigger: '.hood', start: 'top bottom', end: 'bottom top', scrub: 1 } });
         gsap.to('.hood-title-b', { xPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hood', start: 'top bottom', end: 'bottom top', scrub: 1 } });
-        gsap.fromTo('.delhi-strip', { xPercent: 0 }, { xPercent: -45, ease: 'none', scrollTrigger: { trigger: '.delhi', start: 'top top', end: '+=1400', scrub: .6, pin: true } });
+        gsap.to('.delhi-strip', { x: () => { const strip = root.current?.querySelector<HTMLElement>('.delhi-strip'); return strip ? -Math.max(0, strip.scrollWidth - window.innerWidth) : 0; }, ease: 'none', scrollTrigger: { trigger: '.delhi', start: 'top top', end: '+=1800', scrub: .6, pin: true, invalidateOnRefresh: true } });
       });
       gsap.from('.hood', { clipPath: 'inset(8% 6% 8% 6%)', scrollTrigger: { trigger: '.hood', start: 'top bottom', end: 'top 30%', scrub: .6 } });
       gsap.from('.finale-line', { yPercent: 100, opacity: 0, stagger: .15, scrollTrigger: { trigger: '.finale', start: 'top 75%', end: 'center 60%', scrub: .6 } });
