@@ -8,6 +8,9 @@ export function usePortfolioMotion(root: RefObject<HTMLDivElement | null>, reduc
     if (reduced) return;
     const cleanups: (() => void)[] = [];
     const ctx = gsap.context(() => {
+      gsap.fromTo('.paper-chapter', { '--paper-progress': '0%' }, { '--paper-progress': '100%', ease: 'none', scrollTrigger: { trigger: '.paper-chapter', start: 'top 95%', end: 'top 30%', scrub: .6 } });
+      gsap.from('.momo-plate img', { rotate: -9, scale: .86, y: 45, ease: 'none', scrollTrigger: { trigger: '.kitchen-opening', start: 'top 85%', end: 'center 50%', scrub: .7 } });
+      gsap.from('.kitchen-recipe, .chutney-note', { y: 24, opacity: 0, stagger: .15, duration: .8, scrollTrigger: { trigger: '.kitchen-recipe', start: 'top 92%', once: true } });
       gsap.from('.name-line', { yPercent: 110, rotate: 4, stagger: .13, duration: 1.35, ease: 'expo.out', clearProps: 'all' });
       gsap.from('.opening-top, .opening-eyebrow, .opening-bottom', { opacity: 0, y: 12, stagger: .12, delay: .4, duration: .9, clearProps: 'all' });
       gsap.to('.opening-image', { yPercent: 12, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '.editorial-opening', start: 'top top', end: 'bottom top', scrub: .7 } });

@@ -56,6 +56,10 @@
   --sage: var(--muted);
   --grid-line: color-mix(in oklch, var(--foreground) 5%, transparent);
   --shadow-overlay: 0 24px 100px color-mix(in oklch, var(--background) 60%, transparent);
+  --paper: oklch(0.9851 0 0);
+  --paper-ink: oklch(0.13441 0 0);
+  --paper-surface: oklch(0.95 0 0);
+  --paper-muted: oklch(0.46 0 0);
 }
 @layer base {
   * { border-color: var(--border); }
@@ -424,6 +428,18 @@
 .flow.is-live .flow-wire:after { content: ''; position: absolute; width: 5px; height: 1px; background: var(--foreground); animation: wire-packet 2.6s infinite; animation-delay: inherit; }
 @keyframes wire-packet { from { transform: translateX(-5px); } to { transform: translateX(23px); } }
 .momos { border-top: 1px solid var(--border); }
+.paper-chapter { --paper-progress: 100%; --background: color-mix(in oklch, var(--paper) var(--paper-progress), var(--paper-ink)); --foreground: color-mix(in oklch, var(--paper-ink) var(--paper-progress), var(--paper)); --surface: color-mix(in oklch, var(--paper-surface) var(--paper-progress), var(--paper-ink)); --muted: var(--paper-muted); --muted-foreground: var(--muted); --card: var(--surface); --primary: var(--foreground); --primary-foreground: var(--background); --secondary: var(--surface); --accent: var(--surface); --border: color-mix(in oklch, var(--foreground) 18%, var(--background)); --chalk: var(--foreground); --ink: var(--background); --signal: var(--foreground); --sage: var(--muted); background: var(--background); color: var(--foreground); }
+.kitchen-opening { display: grid; grid-template-columns: 1.1fr 1fr; gap: 45px; align-items: center; margin-bottom: 65px; }
+.kitchen-copy { min-width: 0; }
+.kitchen-recipe { border-top: 1px solid var(--border); padding-top: 20px; line-height: 2.2; color: var(--muted); }
+.momo-plate { position: relative; margin: 0; min-width: 0; }
+.momo-plate img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; mix-blend-mode: multiply; }
+.plate-annotation { display: block; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+.momo-plate figcaption { text-align: right; font-size: 15px; margin-top: 18px; }
+.chutney-note { border-top: 1px solid var(--border); padding-top: 20px; flex: 1; }
+.chutney-note p { font-size: 17px; line-height: 1.8; margin: 16px 0; }
+@media(max-width:900px) { .kitchen-opening { grid-template-columns: 1fr; gap: 35px; }.momo-plate { max-width: 480px; width: 100%; justify-self: center; }.chutney-note p { font-size: 14px; } }
+@media(max-width:480px) { .leftovers { flex-direction: column; align-items: start; }.chutney-note { width: 100%; }.momo-plate figcaption { font-size: 13px; } }
 .momo-lines { margin: 35px 0 60px; }
 .momo-line { font: 400 18px/1.9 var(--font-sans); color: var(--muted); }
 .momo-line:last-child { color: var(--foreground); margin-top: 20px; }
