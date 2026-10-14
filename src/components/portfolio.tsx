@@ -79,7 +79,7 @@ export function Portfolio() {
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>('.practice-word').forEach((el, i) => {
-        gsap.from(el, { y: i % 2 ? 12 : -12, opacity: .15, ease: 'none', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 45%', scrub: .6 } });
+        gsap.from(el, { y: i % 2 ? 6 : -6, opacity: .5, ease: 'none', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 45%', scrub: .6 } });
       });
       // Metro map draws itself.
       gsap.utils.toArray<SVGPathElement>('.metro-map .line').forEach(p => {
