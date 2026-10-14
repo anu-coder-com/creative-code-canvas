@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import OptionWheel from '@/components/react-bits/OptionWheel';
-import TargetCursor from '@/components/react-bits/TargetCursor';
 import { PortfolioIdentity } from './portfolio-identity';
 import { usePortfolioMotion } from './portfolio-motion';
 import Magnet from '@/components/react-bits/Magnet';
@@ -22,6 +21,7 @@ import FolderFloat from '@/components/react-bits/FolderFloat';
 import { PortfolioExperiments } from '@/components/portfolio-experiments';
 import { Timeline } from '@/components/ui/timeline';
 import chalkSystems from '@/assets/chalk-systems.jpg';
+import momosEditorial from '@/assets/momos-editorial.jpg';
 import { navItems, navIds, heroWords, metroStations, capabilities, caseStages, projects, hoodNodes, projectTypes } from '@/components/portfolio-content';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -132,7 +132,6 @@ export function Portfolio() {
 
   return <TooltipProvider delayDuration={120}><div ref={root} className="portfolio">
     <div className="grain" aria-hidden="true"/>
-    {!reduced && <TargetCursor targetSelector=".cursor-target" hideDefaultCursor={false} spinDuration={5} parallaxOn={false} cursorColor="var(--foreground)" cursorColorOnTarget="var(--signal)"/>}
     <nav className="rail" aria-label="Story progress"><span className="rail-fill" aria-hidden="true"/>{navItems.map((n, i) => <Button variant="ghost" key={n} className={`rail-stop cursor-target ${i <= active ? 'is-passed' : ''} ${i === active ? 'is-here' : ''}`} onClick={() => navigate(i)} aria-label={`Go to ${n}`}><span>{n}</span></Button>)}</nav>
 
     <main>
@@ -165,17 +164,26 @@ export function Portfolio() {
       </section>
 
       {/* 04 — WORK / MOMOS */}
+      <div className="paper-chapter">
       <section id="work" className="section momos">
-        <div className="page-margin">
+        <div className="page-margin kitchen-opening">
+          <div className="kitchen-copy">
           <span className="mono-label kicker">04 / THE KITCHEN</span>
           <h2 className="display reveal"><span className="mask"><span className="char-line">PROJECTS ARE</span></span><span className="mask"><span className="char-line">LIKE MOMOS.</span></span></h2>
           <div className="momo-lines">{['Sometimes they’re hot.', 'Sometimes they’re a little messy.', 'Sometimes you burn your tongue.', 'Sometimes you wonder why you ordered 30.', 'But when they’re good, you immediately want another plate.'].map(l => <p className="momo-line" key={l}>{l}</p>)}</div>
+          <p className="kitchen-recipe mono-label">THE FILLING: A GOOD IDEA.<br/>THE FOLDS: DESIGN + CODE.<br/>THE CHUTNEY: THE LITTLE DETAILS.</p>
+          </div>
+          <figure className="momo-plate">
+            <span className="mono-label plate-annotation">ONE IDEA. MANY FOLDS. ↘</span>
+            <img src={momosEditorial} alt="Steamed momos and chutney on a steel plate" loading="lazy" width={1024} height={1024}/>
+            <figcaption className="hand-note">good things take a little heat.</figcaption>
+          </figure>
         </div>
         <div className="project-menu"><FlowingMenu items={projects.map((x, i) => ({ link: `#${x.id}`, text: `0${i + 1} — ${x.name} · ${x.kind}`, image: chalkSystems }))} onSelect={i => { setStage(0); setProject(i); }} textColor="var(--chalk)" bgColor="transparent" marqueeBgColor="var(--signal)" marqueeTextColor="var(--ink)" borderColor="var(--border)" reduced={reduced}/></div>
         <div className="page-margin plate-row">
           {projects.map((x, i) => <BorderGlow key={x.id} className="plate" backgroundColor="var(--background)" glowColor="var(--signal)" colors={['var(--foreground)', 'var(--muted)', 'var(--chalk)']} borderRadius={6} glowRadius={20} glowIntensity={.6} fillOpacity={.04}><Button variant="ghost" className="plate-btn cursor-target" onClick={() => { setStage(0); setProject(i); }}><span className="mono-label">0{i + 1} / {x.kind}</span><strong>{x.name}</strong><span className="hand-note text-signal">{x.status}</span></Button></BorderGlow>)}
         </div>
-        <div className="page-margin leftovers"><FolderFloat trigger="hover" label="Leftovers" sublabel="small artifacts" items={['Chai timer', 'Metro rhythm', 'Cursor toys']} width={170} height={112} radius={6} spread={110} lift={44} physics={!reduced} folderColor="var(--surface)" frontColor="var(--signal)" paperColor="var(--chalk)" itemColor="var(--chalk)" itemTextColor="var(--ink)" labelColor="var(--ink)"/><span className="hand-note">needs more chutney →</span></div>
+        <div className="page-margin leftovers"><FolderFloat trigger="hover" label="Leftovers" sublabel="small artifacts" items={['Chai timer', 'Metro rhythm', 'Tiny details']} width={170} height={112} radius={6} spread={110} lift={44} physics={!reduced} folderColor="var(--surface)" frontColor="var(--signal)" paperColor="var(--chalk)" itemColor="var(--chalk)" itemTextColor="var(--ink)" labelColor="var(--ink)"/><div className="chutney-note"><span className="mono-label">THE EXTRA CHUTNEY</span><p>Not every idea becomes a project.<br/>Some become the detail that makes it better.</p><span className="hand-note">a little extra, never an afterthought. ↖</span></div></div>
       </section>
 
       {/* 05 — UNDER THE HOOD */}
@@ -245,8 +253,9 @@ export function Portfolio() {
         <p className="finale-line">DESIGN IT.</p><p className="finale-line">BUILD IT.</p><p className="finale-line text-signal">SHIP IT.</p>
         <span className="mono-label finale-route">NEW DELHI → EVERYWHERE</span>
       </section>
+      <footer className="footer page-margin"><span className="mono-label">ANIKET SHARMA · © 2026</span><span className="mono-label">FUEL: CHAI + CODE</span><span className="mono-label">MIND THE GAP ↗</span></footer>
+      </div>
     </main>
-    <footer className="footer page-margin"><span className="mono-label">ANIKET SHARMA · © 2026</span><span className="mono-label">FUEL: CHAI + CODE</span><span className="mono-label">MIND THE GAP ↗</span></footer>
 
     <Dialog.Root open={wheelOpen} onOpenChange={setWheelOpen}><Dialog.Trigger asChild><Button variant="chalk" className="wheel-trigger cursor-target" aria-label="Open navigation wheel"><Compass/></Button></Dialog.Trigger><Dialog.Portal><Dialog.Content className="wheel-panel" data-lenis-prevent><Dialog.Title className="mono-label text-muted-foreground">CHOOSE A STATION</Dialog.Title><Dialog.Description className="sr-only">Spin the wheel then go.</Dialog.Description><div className="wheel-object"><OptionWheel items={navItems} defaultSelected={selected} fontSize={2.3} spacing={1.4} inset={40} tilt={13} curve={1.5} blur={0} fade={.21} minOpacity={.12} onChange={i => setSelected(i)}/></div><div className="wheel-panel-foot"><Button variant="ghost" size="sm" onClick={() => setWheelOpen(false)} aria-label="Close"><X/></Button><Button variant="ghost" size="sm" className="mono-label cursor-target" onClick={() => navigate(selected)}>GO TO {navItems[selected]} <ArrowRight/></Button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
 
