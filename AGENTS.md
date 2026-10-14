@@ -19,3 +19,4 @@
 - Centralize reference-led pointer and section motion in a cleanup-safe portfolio motion hook; exclude physics-based controls from delegated transforms to preserve their original interactions.
 - Keep illustrative project content labeled as concept work and contact as a local message composer until the owner supplies verified projects and a destination.
 - Scope the lower narrative's inverted semantic palette to the paper chapter and animate its progress with GSAP; this keeps the photographic opening and portal dialogs independent.
+- Keep the Connaught Place field-note illustration and circle selection in a dedicated presentational component; the shared motion hook owns its animation lifecycle.

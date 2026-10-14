@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import OptionWheel from '@/components/react-bits/OptionWheel';
 import { PortfolioIdentity } from './portfolio-identity';
+import { ConnaughtPlace } from './connaught-place';
 import { usePortfolioMotion } from './portfolio-motion';
 import Magnet from '@/components/react-bits/Magnet';
 import SpecularButton from '@/components/react-bits/SpecularButton';
@@ -214,7 +215,7 @@ export function Portfolio() {
         <div className="delhi-strip">
           <div className="delhi-intro"><span className="mono-label kicker">07 / ORIGIN</span><h2 className="display">MADE IN<br/>DELHI.</h2><p className="lede">A city where everyone has a shortcut, every road has three alternate routes, and somehow there’s always traffic.</p></div>
           {[['CURRENT LOCATION', 'NEW DELHI'], ['CURRENT FUEL', chai ? 'CHAI' : 'COLD COFFEE (RARE)'], ['CURRENT PROBLEM', 'WHY IS THIS API DOING THAT?'], ['LUNCH', 'CHOLE BHATURE'], ['WEATHER', 'DELHI WINTER · FOG MODE'], ['COMMUTE', 'METRO > AUTO > WALK']].map(([k, v]) => <div className="delhi-sign cursor-target" key={k}><span className="mono-label">{k}</span><strong>{v}</strong></div>)}
-          <div className="cp-ring" aria-hidden="true"><span>CONNAUGHT PLACE · INNER CIRCLE · OUTER CIRCLE ·</span></div>
+          <ConnaughtPlace/>
         </div>
       </section>
 
