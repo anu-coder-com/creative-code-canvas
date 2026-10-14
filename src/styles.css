@@ -89,7 +89,7 @@
 .metro-station { position: relative; padding-top: 15px; font: 9px var(--font-mono); color: var(--muted-foreground); }
 .metro-station:before { content: ''; position: absolute; top: -4px; left: 0; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--border); background: var(--background); }
 .metro-station.is-passed:before { border-color: var(--primary); background: var(--primary); }
-.wheel-trigger { position: fixed; bottom: 29px; right: 35px; z-index: 90; width: 67px; height: 67px; border-radius: 50%; }
+.wheel-trigger { position: fixed; bottom: 29px; right: 35px; z-index: 90; width: 67px; height: 67px; border-radius: 50%; background: var(--background); }
 .wheel-trigger svg { width: 26px; height: 26px; }
 .wheel-trigger:before, .wheel-trigger:after { content: ''; position: absolute; inset: -7px; border: 1px dashed var(--muted-foreground); border-radius: 50%; pointer-events: none; }
 .wheel-trigger:after { inset: -13px; opacity: .25; }

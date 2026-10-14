@@ -1,5 +1,5 @@
 # Portfolio roadmap
-- [ ] Add scroll-driven white lower sections, enrich the momos/chutney composition, remove the global cursor, and verify.
+- [x] Add scroll-driven white lower sections, enrich the momos/chutney composition, remove the global cursor, and verify.
 - [x] Create charcoal/chalk design system and visual assets.
 - [x] Integrate original interaction components and animated narrative.
 - [x] Build cinematic work, systems, experiments and contact experience.
