@@ -11,6 +11,14 @@ export function usePortfolioMotion(root: RefObject<HTMLDivElement | null>, reduc
       gsap.fromTo('.paper-chapter', { '--paper-progress': '0%' }, { '--paper-progress': '100%', ease: 'none', scrollTrigger: { trigger: '.paper-chapter', start: 'top 95%', end: 'top 30%', scrub: .6 } });
       gsap.from('.momo-plate img', { rotate: -9, scale: .86, y: 45, ease: 'none', scrollTrigger: { trigger: '.kitchen-opening', start: 'top 85%', end: 'center 50%', scrub: .7 } });
       gsap.from('.kitchen-recipe, .chutney-note', { y: 24, opacity: 0, stagger: .15, duration: .8, scrollTrigger: { trigger: '.kitchen-recipe', start: 'top 92%', once: true } });
+      const cp = root.current?.querySelector('.cp-study');
+      if (cp) {
+        const drawing = cp.querySelector('.cp-drawing');
+        const unfold = () => gsap.fromTo(cp.querySelectorAll('.cp-blocks path'), { opacity: .2 }, { opacity: 1, stagger: .025, duration: .55, ease: 'power2.out', overwrite: true });
+        gsap.fromTo(drawing, { rotate: -8, y: 25 }, { rotate: 0, y: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: '.delhi', start: 'top 70%', once: true } });
+        cp.addEventListener('pointerenter', unfold); cp.addEventListener('click', unfold);
+        cleanups.push(() => { cp.removeEventListener('pointerenter', unfold); cp.removeEventListener('click', unfold); gsap.killTweensOf(cp.querySelectorAll('.cp-blocks path')); });
+      }
       gsap.from('.name-line', { yPercent: 110, rotate: 4, stagger: .13, duration: 1.35, ease: 'expo.out', clearProps: 'all' });
       gsap.from('.opening-top, .opening-eyebrow, .opening-bottom', { opacity: 0, y: 12, stagger: .12, delay: .4, duration: .9, clearProps: 'all' });
       gsap.to('.opening-image', { yPercent: 12, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '.editorial-opening', start: 'top top', end: 'bottom top', scrub: .7 } });

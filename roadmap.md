@@ -1,4 +1,5 @@
 # Portfolio roadmap
+- [ ] Replace the plain Connaught Place circle with an architectural field note and verify circle selection and layout.
 - [x] Add scroll-driven white lower sections, enrich the momos/chutney composition, remove the global cursor, and verify.
 - [x] Create charcoal/chalk design system and visual assets.
 - [x] Integrate original interaction components and animated narrative.

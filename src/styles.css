@@ -471,7 +471,26 @@
 .delhi-sign { width: 250px; padding: 25px 0; border-top: 1px solid var(--border); flex-shrink: 0; }
 .delhi-sign .mono-label { color: var(--muted); font-size: 8px; }
 .delhi-sign strong { display: block; font: 600 25px/1.5 var(--font-display); margin-top: 30px; }
-.cp-ring { width: 260px; height: 260px; border: 1px solid var(--muted); border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 40px; font: 10px/2 var(--font-sans); }
+.cp-study { width: 500px; flex-shrink: 0; margin: 0; border-top: 1px solid var(--foreground); padding-top: 18px; }
+.cp-study-top { display: flex; justify-content: space-between; align-items: center; color: var(--muted); }
+.cp-study-top svg { width: 18px; height: 18px; }
+.cp-drawing { width: 100%; margin: 12px 0; }
+.cp-drawing svg { display: block; width: 100%; height: auto; overflow: visible; }
+.cp-streets, .cp-leader { fill: none; stroke: var(--border); stroke-width: 1; }
+.cp-blocks { fill: var(--surface); stroke: var(--muted); stroke-width: 1; transition: fill .5s, stroke .5s; }
+.is-inner .cp-inner-blocks, .is-outer .cp-outer-blocks { fill: color-mix(in oklch, var(--foreground) 12%, var(--background)); stroke: var(--foreground); }
+.cp-colonnades { stroke: var(--muted); stroke-width: 1; }
+.cp-route { fill: none; stroke: var(--foreground); stroke-width: 2.5; stroke-dasharray: 4 4; }
+.cp-destination { fill: var(--foreground); }
+.cp-map-title { font: 700 36px var(--font-display); fill: var(--foreground); }
+.cp-map-small { font: 7px var(--font-sans); fill: var(--muted); }
+.cp-study h3 { font: 700 42px/1.05 var(--font-display); }
+.cp-study-bottom { display: flex; flex-direction: column; gap: 20px; margin-top: 25px; }
+.cp-layer-controls { display: flex; gap: 20px; }
+.cp-layer-controls button { border-radius: 0; padding: 0 0 8px; height: 30px; font-size: 9px; color: var(--muted); border-bottom: 1px solid transparent; }
+.cp-layer-controls button[aria-pressed=true] { color: var(--foreground); border-color: var(--foreground); }
+.cp-study-bottom .hand-note { font-size: 14px; color: var(--muted); }
+@media(max-width:900px) { .cp-study { width: 100%; max-width: 500px; margin-top: 25px; }.cp-study h3 { font-size: 34px; } }
 .details { border-bottom: 1px solid var(--border); }
 .detail-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 50px; }
 .detail { min-height: 140px; padding: 28px 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 25px; align-items: start; }
